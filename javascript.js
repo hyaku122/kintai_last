@@ -372,6 +372,20 @@ const sumRegularPay = document.getElementById("sumRegularPay");
 const sumOverPay = document.getElementById("sumOverPay");
 const sumTotalPay = document.getElementById("sumTotalPay");
 
+function applySummaryToneClasses() {
+  const regularTargets = [sumRegularHours, sumRegularPay];
+  const overtimeTargets = [sumOverHours, sumOverPay];
+
+  for (const el of regularTargets) {
+    const item = el?.closest(".summary-item");
+    if (item) item.classList.add("summary-item-regular");
+  }
+  for (const el of overtimeTargets) {
+    const item = el?.closest(".summary-item");
+    if (item) item.classList.add("summary-item-overtime");
+  }
+}
+
 let state = loadState();
 
 const ui = {
@@ -682,11 +696,9 @@ function renderDays() {
     if (metrics.isSat) card.classList.add("is-sat");
     if (metrics.isSunOrHoliday) card.classList.add("is-sunholiday");
 
-    // 1行目（レスポンシブで自動的に2〜3行相当に再配置される）
-    const row = document.createElement("div");
-    row.className = "day-row";
+    const rowTop = document.createElement("div");
+    rowTop.className = "day-row day-row-top";
 
-    // date cell
     const dateCell = document.createElement("div");
     dateCell.className = "cell";
 
@@ -723,20 +735,74 @@ function renderDays() {
 
     dateCell.appendChild(dateLine);
 
-    // time cell
+    const workedCell = document.createElement("div");
+    workedCell.className = "cell worked-area";
+
+    const worked = document.createElement("div");
+    worked.className = "worked-hours tabnums";
+    worked.textContent = metrics.workedText;
+
+    workedCell.appendChild(worked);
+
+    const iconsCell = document.createElement("div");
+    iconsCell.className = "cell icons-area";
+
+    const catBtn = document.createElement("button");
+    catBtn.type = "button";
+    catBtn.className = "icon-mini category";
+    const catSelected = (metrics.category !== CATEGORY.NORMAL);
+    if (catSelected) catBtn.classList.add("is-selected");
+    catBtn.innerHTML = svgSparklesCircle(catSelected);
+    catBtn.setAttribute("aria-label", "\u52e4\u6020\u533a\u5206\u9078\u629e");
+
+    catBtn.addEventListener("click", () => {
+      const chosen = chooseCategory(rec.category || CATEGORY.NORMAL);
+      if (!chosen) return;
+
+      if (chosen === CATEGORY.PAID_LEAVE) {
+        setDayRecord(year, key, { category: chosen, in: null, out: null });
+      } else if (chosen === CATEGORY.NORMAL) {
+        setDayRecord(year, key, { category: chosen });
+      } else if (chosen === CATEGORY.HOLIDAY_WORK) {
+        setDayRecord(year, key, { category: chosen });
+      }
+      renderAll();
+    });
+
+    const memoBtn = document.createElement("button");
+    memoBtn.type = "button";
+    memoBtn.className = "icon-mini memo";
+    memoBtn.innerHTML = svgMemoIcon();
+    memoBtn.setAttribute("aria-label", "\u30e1\u30e2");
+
+    if (rec.noteOpen) memoBtn.classList.add("is-open");
+
+    memoBtn.addEventListener("click", () => {
+      setDayRecord(year, key, { noteOpen: !rec.noteOpen });
+      renderAll();
+    });
+
+    iconsCell.appendChild(catBtn);
+    iconsCell.appendChild(memoBtn);
+
+    rowTop.appendChild(dateCell);
+    rowTop.appendChild(workedCell);
+    rowTop.appendChild(iconsCell);
+    card.appendChild(rowTop);
+
+    const rowTime = document.createElement("div");
+    rowTime.className = "day-row-time";
+
     const timeCell = document.createElement("div");
     timeCell.className = "cell time-area";
 
     if (metrics.allowTimeArea) {
-      const line1 = document.createElement("div");
-      line1.className = "time-line";
-
       const inBtn = document.createElement("button");
       inBtn.type = "button";
       inBtn.className = "time-btn";
       inBtn.textContent = metrics.isHolidayWork && metrics.isOffDay
-        ? "出勤(休日)"
-        : "出勤";
+        ? "\u51fa\u52e4(\u4f11\u65e5)"
+        : "\u51fa\u52e4";
 
       const inInput = document.createElement("input");
       inInput.type = "time";
@@ -747,7 +813,7 @@ function renderDays() {
       const outBtn = document.createElement("button");
       outBtn.type = "button";
       outBtn.className = "time-btn";
-      outBtn.textContent = "退勤";
+      outBtn.textContent = "\u9000\u52e4";
 
       const outInput = document.createElement("input");
       outInput.type = "time";
@@ -757,7 +823,6 @@ function renderDays() {
 
       const setInAuto = () => {
         if (metrics.isHolidayWork) {
-          // 採用した前提: 休日出勤ボタンは「現在時刻」を入れる（手入力の補助）
           setDayRecord(year, key, { in: roundToMinuteHHMM() });
         } else {
           setDayRecord(year, key, { in: "09:30" });
@@ -787,101 +852,32 @@ function renderDays() {
         renderAll();
       });
 
-      // 土日祝・会社休日は原則ボタン非表示。ただし休日出勤は可。
       const shouldHideButtonsOnHoliday =
         metrics.isOffDay &&
         !metrics.isHolidayWork;
 
-      if (!shouldHideButtonsOnHoliday) {
-        line1.appendChild(inBtn);
-      }
-      line1.appendChild(inInput);
-
-      const line2 = document.createElement("div");
-      line2.className = "time-line";
-      if (!shouldHideButtonsOnHoliday) {
-        line2.appendChild(outBtn);
-      }
-      line2.appendChild(outInput);
-
-      // 土日祝・会社休日 かつ 通常/有給: 出退勤非表示
       const shouldHideAllTimes =
         metrics.isOffDay &&
         !metrics.isHolidayWork;
 
       if (!shouldHideAllTimes) {
-        timeCell.appendChild(line1);
-        timeCell.appendChild(line2);
+        const line = document.createElement("div");
+        line.className = "time-line time-line-pair";
+
+        if (!shouldHideButtonsOnHoliday) line.appendChild(inBtn);
+        line.appendChild(inInput);
+        if (!shouldHideButtonsOnHoliday) line.appendChild(outBtn);
+        line.appendChild(outInput);
+
+        timeCell.appendChild(line);
       }
     }
 
-    // icons cell
-    const iconsCell = document.createElement("div");
-    iconsCell.className = "cell icons-area";
+    if (timeCell.childElementCount > 0) {
+      rowTime.appendChild(timeCell);
+      card.appendChild(rowTime);
+    }
 
-    const catBtn = document.createElement("button");
-    catBtn.type = "button";
-    catBtn.className = "icon-mini category";
-    const catSelected = (metrics.category !== CATEGORY.NORMAL);
-    if (catSelected) catBtn.classList.add("is-selected");
-    catBtn.innerHTML = svgSparklesCircle(catSelected);
-    catBtn.setAttribute("aria-label", "勤怠区分");
-
-    catBtn.addEventListener("click", () => {
-      const chosen = chooseCategory(rec.category || CATEGORY.NORMAL);
-      if (!chosen) return;
-
-      if (chosen === CATEGORY.PAID_LEAVE) {
-        // 有給: 出退勤は不要
-        setDayRecord(year, key, { category: chosen, in: null, out: null });
-      } else if (chosen === CATEGORY.NORMAL) {
-        setDayRecord(year, key, { category: chosen });
-      } else if (chosen === CATEGORY.HOLIDAY_WORK) {
-        // 休日出勤: 既存時刻は残す（未入力でもOK）
-        setDayRecord(year, key, { category: chosen });
-      }
-      renderAll();
-    });
-
-    const memoBtn = document.createElement("button");
-    memoBtn.type = "button";
-    memoBtn.className = "icon-mini memo";
-    memoBtn.innerHTML = svgMemoIcon();
-    memoBtn.setAttribute("aria-label", "備考");
-
-    if (rec.noteOpen) memoBtn.classList.add("is-open");
-
-    memoBtn.addEventListener("click", () => {
-      setDayRecord(year, key, { noteOpen: !rec.noteOpen });
-      renderAll();
-    });
-
-    iconsCell.appendChild(catBtn);
-    iconsCell.appendChild(memoBtn);
-
-    // worked cell (PC広幅で出すため、gridの列が増える)
-    const workedCell = document.createElement("div");
-    workedCell.className = "cell worked-area";
-
-    const worked = document.createElement("div");
-    worked.className = "worked-hours tabnums";
-    worked.textContent = metrics.workedText;
-
-    workedCell.appendChild(worked);
-
-    // grid: 幅で列が変わるので、順番を固定で追加
-    row.appendChild(dateCell);
-    row.appendChild(timeCell);
-
-    // 520px以上では worked列を入れる（CSSが4列になる）
-    // 860px以上では icons+worked を別列化（CSSが5列になる）
-    // ただしDOM上は常に icons, worked を入れておけば gridが勝手に折り返す
-    row.appendChild(iconsCell);
-    row.appendChild(workedCell);
-
-    card.appendChild(row);
-
-    // 備考（2行目/3行目相当）
     const noteArea = document.createElement("div");
     noteArea.className = "note-area" + (rec.noteOpen ? " is-open" : "");
 
@@ -889,11 +885,10 @@ function renderDays() {
     noteInput.className = "note-input";
     noteInput.rows = 2;
     noteInput.value = rec.note || "";
-    noteInput.placeholder = ""; // 常時表示しない要件があるので文言は出さない
+    noteInput.placeholder = "";
 
     noteInput.addEventListener("input", () => {
       setDayRecord(year, key, { note: noteInput.value });
-      // 入力中の再描画は重いので即座にはrenderAllしない
       saveState();
     });
 
@@ -1131,6 +1126,7 @@ async function registerServiceWorker() {
 function init() {
   ensureYearData(state.year);
   ui.selectedYear = state.year;
+  applySummaryToneClasses();
 
   renderMonthTabs();
   scrollSelectedTabToLeft();

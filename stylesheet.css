@@ -173,6 +173,16 @@ body{
   min-width: 0;
 }
 
+.summary-item-regular{
+  background: rgba(255, 248, 220, 0.86);
+  border-color: rgba(230, 199, 124, 0.8);
+}
+
+.summary-item-overtime{
+  background: rgba(255, 232, 210, 0.86);
+  border-color: rgba(236, 164, 95, 0.82);
+}
+
 .summary-item-wide{
   grid-column: 1 / -1;
   background: rgba(191, 240, 220, 0.25);
@@ -220,22 +230,24 @@ body{
 }
 
 .day-row{
+  min-width: 0; /* overflow guard */
+}
+
+.day-row-top{
   display: grid;
   gap: 8px;
   align-items: center;
-  grid-template-columns: 1fr auto;
-  min-width: 0; /* 押し広げ防止 */
+  grid-template-columns: minmax(0, 1fr) auto auto;
 }
 
-@media (min-width: 520px){
-  .day-row{
-    grid-template-columns: 1.8fr 1.4fr auto auto;
-  }
+.day-row-time{
+  margin-top: 8px;
+  min-width: 0;
 }
 
-@media (min-width: 860px){
-  .day-row{
-    grid-template-columns: 2fr 1.5fr auto auto;
+@media (max-width: 420px){
+  .day-row-top{
+    gap: 6px;
   }
 }
 
@@ -245,16 +257,18 @@ body{
 
 .date-line{
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  align-items: flex-start;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
 }
 
 .date-main{
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 6px;
   align-items: center;
+  min-width: 0;
+  flex-shrink: 0;
 }
 
 .judge-inline{
@@ -279,8 +293,10 @@ body{
   font-size: 12px;
   font-weight: 700;
   color: var(--muted);
-  max-width: 100%;
-  word-break: break-word;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .day-card.is-sat .date-text,
@@ -325,24 +341,17 @@ body{
 }
 
 .time-area{
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
   min-width: 0;
-  grid-column: 1 / -1;
-}
-
-@media (min-width: 520px){
-  .time-area{
-    grid-column: auto;
-  }
 }
 
 .time-line{
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
   gap: 6px;
   align-items: center;
+}
+
+.time-line.time-line-pair{
+  grid-template-columns: auto minmax(84px, 1fr) auto minmax(84px, 1fr);
 }
 
 .time-line > .time-input:only-child{
