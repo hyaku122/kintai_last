@@ -173,6 +173,11 @@ body{
   min-width: 0;
 }
 
+.summary-item.summary-item-work{
+  background: rgba(222, 247, 228, 0.88);
+  border-color: rgba(111, 187, 126, 0.82);
+}
+
 .summary-item-regular{
   background: rgba(255, 248, 220, 0.86);
   border-color: rgba(230, 199, 124, 0.8);
@@ -187,6 +192,11 @@ body{
   grid-column: 1 / -1;
   background: rgba(191, 240, 220, 0.25);
   border: 1px solid rgba(191, 240, 220, 0.35);
+}
+
+.summary-item.summary-item-totalpay{
+  background: rgba(255, 228, 238, 0.9);
+  border-color: rgba(236, 148, 178, 0.84);
 }
 
 .summary-label{
@@ -351,7 +361,13 @@ body{
 }
 
 .time-line.time-line-pair{
-  grid-template-columns: auto minmax(84px, 1fr) auto minmax(84px, 1fr);
+  grid-template-columns: auto calc(110px - 5mm) auto calc(110px - 5mm);
+}
+
+.time-line.time-line-pair .time-input{
+  width: calc(110px - 5mm);
+  min-width: calc(110px - 5mm);
+  max-width: calc(110px - 5mm);
 }
 
 .time-line > .time-input:only-child{

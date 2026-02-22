@@ -373,9 +373,15 @@ const sumOverPay = document.getElementById("sumOverPay");
 const sumTotalPay = document.getElementById("sumTotalPay");
 
 function applySummaryToneClasses() {
+  const workTargets = [sumWorkDays, sumTotalHours];
   const regularTargets = [sumRegularHours, sumRegularPay];
   const overtimeTargets = [sumOverHours, sumOverPay];
+  const totalTargets = [sumTotalPay];
 
+  for (const el of workTargets) {
+    const item = el?.closest(".summary-item");
+    if (item) item.classList.add("summary-item-work");
+  }
   for (const el of regularTargets) {
     const item = el?.closest(".summary-item");
     if (item) item.classList.add("summary-item-regular");
@@ -383,6 +389,10 @@ function applySummaryToneClasses() {
   for (const el of overtimeTargets) {
     const item = el?.closest(".summary-item");
     if (item) item.classList.add("summary-item-overtime");
+  }
+  for (const el of totalTargets) {
+    const item = el?.closest(".summary-item");
+    if (item) item.classList.add("summary-item-totalpay");
   }
 }
 
