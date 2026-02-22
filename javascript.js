@@ -480,7 +480,8 @@ function computeDayMetrics(year, key, holidayMap, companyHolidaySetForYear) {
 
   const isNatHoliday = holidayMap.has(key);
   const isCompHoliday = companyHolidaySetForYear.has(key);
-  const isHolidayLike = isNatHoliday || isCompHoliday || isSun; // 日曜は休日扱い
+  const isOffDay = isNatHoliday || isCompHoliday || isSun || isSat;
+  const isHolidayLike = isOffDay; // 日曜は休日扱い
   const isSunOrHoliday = isSun || isNatHoliday || isCompHoliday;
 
   const category = rec.category || CATEGORY.NORMAL;
@@ -595,10 +596,15 @@ function computeDayMetrics(year, key, holidayMap, companyHolidaySetForYear) {
 
   const workedText = (category === CATEGORY.PAID_LEAVE)
     ? "8.0h"
-    : (hasWorkRecord ? `${(Math.round(hours * 10) / 10).toFixed(1)}h` : "-");
+    : (
+      hasWorkRecord
+        ? `${(Math.round(hours * 10) / 10).toFixed(1)}h`
+        : ((isOffDay && !isHolidayWork) ? "\u4f11\u65e5" : "-")
+    );
 
   return {
     isSat,
+    isOffDay,
     isSunOrHoliday,
     isNatHoliday,
     isCompHoliday,
@@ -691,7 +697,22 @@ function renderDays() {
     dateText.className = "date-text tabnums";
     dateText.textContent = datePart;
 
-    dateLine.appendChild(dateText);
+    const dateMain = document.createElement("div");
+    dateMain.className = "date-main";
+    dateMain.appendChild(dateText);
+
+    const judgeInline = document.createElement("div");
+    judgeInline.className = "judge-inline";
+    if (metrics.judgeLines.length > 0 && metrics.judgeType) {
+      for (const line of metrics.judgeLines) {
+        const b = document.createElement("div");
+        b.className = `badge ${metrics.judgeType}`;
+        b.textContent = line;
+        judgeInline.appendChild(b);
+      }
+    }
+    dateMain.appendChild(judgeInline);
+    dateLine.appendChild(dateMain);
 
     if (holidayName) {
       const hn = document.createElement("div");
@@ -701,19 +722,6 @@ function renderDays() {
     }
 
     dateCell.appendChild(dateLine);
-
-    // judge cell
-    const judgeCell = document.createElement("div");
-    judgeCell.className = "cell judge-area";
-
-    if (metrics.judgeLines.length > 0 && metrics.judgeType) {
-      for (const line of metrics.judgeLines) {
-        const b = document.createElement("div");
-        b.className = `badge ${metrics.judgeType}`;
-        b.textContent = line;
-        judgeCell.appendChild(b);
-      }
-    }
 
     // time cell
     const timeCell = document.createElement("div");
@@ -726,7 +734,7 @@ function renderDays() {
       const inBtn = document.createElement("button");
       inBtn.type = "button";
       inBtn.className = "time-btn";
-      inBtn.textContent = metrics.isHolidayWork && (metrics.isSunOrHoliday || metrics.isCompHoliday || metrics.isNatHoliday)
+      inBtn.textContent = metrics.isHolidayWork && metrics.isOffDay
         ? "出勤(休日)"
         : "出勤";
 
@@ -781,7 +789,7 @@ function renderDays() {
 
       // 土日祝・会社休日は原則ボタン非表示。ただし休日出勤は可。
       const shouldHideButtonsOnHoliday =
-        (metrics.isSunOrHoliday || metrics.isCompHoliday || metrics.isNatHoliday) &&
+        metrics.isOffDay &&
         !metrics.isHolidayWork;
 
       if (!shouldHideButtonsOnHoliday) {
@@ -798,7 +806,7 @@ function renderDays() {
 
       // 土日祝・会社休日 かつ 通常/有給: 出退勤非表示
       const shouldHideAllTimes =
-        (metrics.isSunOrHoliday || metrics.isCompHoliday || metrics.isNatHoliday) &&
+        metrics.isOffDay &&
         !metrics.isHolidayWork;
 
       if (!shouldHideAllTimes) {
@@ -863,7 +871,6 @@ function renderDays() {
 
     // grid: 幅で列が変わるので、順番を固定で追加
     row.appendChild(dateCell);
-    row.appendChild(judgeCell);
     row.appendChild(timeCell);
 
     // 520px以上では worked列を入れる（CSSが4列になる）

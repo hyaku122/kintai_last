@@ -223,19 +223,19 @@ body{
   display: grid;
   gap: 8px;
   align-items: center;
-  grid-template-columns: 1.2fr 1fr 1fr;
+  grid-template-columns: 1fr auto;
   min-width: 0; /* 押し広げ防止 */
 }
 
 @media (min-width: 520px){
   .day-row{
-    grid-template-columns: 1.6fr 1.2fr 1.2fr 0.9fr;
+    grid-template-columns: 1.8fr 1.4fr auto auto;
   }
 }
 
 @media (min-width: 860px){
   .day-row{
-    grid-template-columns: 1.8fr 1.2fr 1.2fr 0.9fr 0.9fr;
+    grid-template-columns: 2fr 1.5fr auto auto;
   }
 }
 
@@ -245,9 +245,28 @@ body{
 
 .date-line{
   display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+
+.date-main{
+  display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  align-items: baseline;
+  align-items: center;
+}
+
+.judge-inline{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.judge-inline .badge{
+  font-size: 12px;
+  padding: 4px 8px;
 }
 
 .date-text{
@@ -309,13 +328,25 @@ body{
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 520px){
+  .time-area{
+    grid-column: auto;
+  }
 }
 
 .time-line{
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
   gap: 6px;
   align-items: center;
+}
+
+.time-line > .time-input:only-child{
+  grid-column: 1 / -1;
 }
 
 .time-btn{
@@ -326,6 +357,7 @@ body{
   padding: 8px 10px;
   font-size: 13px;
   font-weight: 800;
+  white-space: nowrap;
   cursor: pointer;
   transition: transform 120ms ease, background 120ms ease;
 }
@@ -335,7 +367,8 @@ body{
 }
 
 .time-input{
-  width: 110px;
+  width: 100%;
+  min-width: 0;
   max-width: 100%;
   border: 1px solid rgba(229, 231, 235, 0.95);
   background: rgba(255,255,255,0.85);
