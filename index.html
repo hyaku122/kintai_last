@@ -19,6 +19,15 @@
     </div>
 
     <div class="topbar-right">
+      <button id="refreshButton" class="icon-button refresh-button" type="button" aria-label="最新版に更新">
+        <svg class="refresh-svg" viewBox="0 0 64 64" width="28" height="28" aria-hidden="true" focusable="false">
+          <path d="M44 14c8.9 4.9 13.8 14.9 11.3 25.2c-2.9 11.7-13.8 19.8-25.9 18.8C17.9 57 9 47.4 8.2 35.9c-.9-13.1 9.5-24 22.4-24c5.3 0 10.3 1.8 14.3 5"
+                fill="none" stroke="#ff7fb7" stroke-width="4" stroke-linecap="round"/>
+          <path d="M45 5l8 14-16 1z" fill="#ffd36e" stroke="#ff7fb7" stroke-width="1.6" stroke-linejoin="round"/>
+          <path d="M20 40l7 7 16-16" fill="none" stroke="#1f8a5b" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 15c.9 3.8 1.9 4.8 5.6 5.6c-3.7.8-4.7 1.8-5.6 5.6c-.8-3.8-1.8-4.8-5.6-5.6c3.8-.8 4.8-1.8 5.6-5.6z" fill="#fff1a8"/>
+        </svg>
+      </button>
       <button id="settingsButton" class="icon-button settings-button" type="button" aria-label="設定">
         <!-- かわいい歯車 + 小さなキラキラ（単色禁止） -->
         <svg class="settings-svg" viewBox="0 0 64 64" width="28" height="28" aria-hidden="true" focusable="false">
@@ -106,6 +115,10 @@
           <input id="companyHolidayDate" class="field-input" type="date" />
           <button id="addCompanyHoliday" class="btn" type="button">追加</button>
         </div>
+        <div class="field-row">
+          <label class="field-label" for="companyHolidayName">休日名</label>
+          <input id="companyHolidayName" class="field-input" type="text" maxlength="40" placeholder="例: 創立記念日" />
+        </div>
 
         <div id="companyHolidayList" class="company-holiday-list" aria-label="会社休日一覧"></div>
 
@@ -121,12 +134,12 @@
         <div class="divider"></div>
 
         <div class="section-title">データ</div>
-        <div class="field-row">
-          <button id="exportData" class="btn subtle" type="button">バックアップ文字列を作成</button>
+        <div class="field-row backup-action-row">
+          <button id="exportData" class="btn subtle backup-action-btn" type="button">バックアップ文字列を作成</button>
         </div>
         <textarea id="backupText" class="backup-text" rows="4" spellcheck="false"></textarea>
-        <div class="field-row">
-          <button id="importData" class="btn subtle" type="button">バックアップ文字列を復元</button>
+        <div class="field-row backup-action-row">
+          <button id="importData" class="btn subtle backup-action-btn" type="button">バックアップ文字列を復元</button>
         </div>
       </div>
 
@@ -135,6 +148,7 @@
       </div>
     </form>
   </dialog>
+  <div id="quickMessage" class="quick-message" role="status" aria-live="polite"></div>
 
   <script src="javascript.js"></script>
 </body>

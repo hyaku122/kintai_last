@@ -70,6 +70,12 @@ body{
   letter-spacing: 0.02em;
 }
 
+.topbar-right{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .icon-button{
   border: none;
   background: transparent;
@@ -86,6 +92,24 @@ body{
 
 .icon-button:active{
   transform: scale(0.96);
+}
+
+.icon-button:disabled{
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.refresh-button{
+  background: rgba(215, 247, 233, 0.60);
+  border: 1px solid rgba(31, 138, 91, 0.28);
+}
+
+.refresh-button:hover{
+  background: rgba(191, 240, 220, 0.78);
+}
+
+.refresh-svg{
+  display: block;
 }
 
 .settings-button{
@@ -230,12 +254,12 @@ body{
 }
 
 .day-card.is-sat{
-  background: linear-gradient(180deg, rgba(233, 245, 255, 0.95) 0%, rgba(255,255,255,0.92) 100%);
+  background: var(--sat-bg);
   border-color: rgba(191, 225, 255, 0.75);
 }
 
 .day-card.is-sunholiday{
-  background: linear-gradient(180deg, rgba(255, 233, 238, 0.95) 0%, rgba(255,255,255,0.92) 100%);
+  background: var(--sun-bg);
   border-color: rgba(255, 203, 214, 0.85);
 }
 
@@ -550,6 +574,14 @@ body{
   margin-bottom: 10px;
 }
 
+.backup-action-row{
+  grid-template-columns: 1fr;
+}
+
+.backup-action-btn{
+  width: min(100%, 340px);
+}
+
 .field-label{
   font-size: 13px;
   color: var(--muted);
@@ -652,4 +684,31 @@ body{
   line-height: 1.35;
   resize: vertical;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+
+.quick-message{
+  position: fixed;
+  left: 50%;
+  bottom: calc(14px + env(safe-area-inset-bottom));
+  transform: translate(-50%, 24px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 30;
+  background: rgba(31, 41, 55, 0.92);
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 800;
+  white-space: nowrap;
+  max-width: calc(100vw - 24px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 8px 22px rgba(31, 41, 55, 0.25);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.quick-message.is-visible{
+  opacity: 1;
+  transform: translate(-50%, 0);
 }

@@ -8,11 +8,13 @@ const TZ = "Asia/Tokyo";
 const LOCALE = "ja-JP";
 
 const STORAGE_KEY = "kintai_pwa_v1";
+const HARD_RELOAD_STEP_KEY = "kintai_hard_reload_step";
+const DEFAULT_COMPANY_HOLIDAY_NAME = "会社休日";
 
 const DEFAULTS = {
   hourlyWage: 1500,
   year: null,
-  // yearData[YYYY] = { companyHolidays: ["YYYY-MM-DD",...], days: { "YYYY-MM-DD": { in:"HH:MM"|null, out:"HH:MM"|null, category:"normal"|"paid_leave"|"holiday_work", note:"", noteOpen:boolean } } }
+  // yearData[YYYY] = { companyHolidays: [{ date:"YYYY-MM-DD", name:"休日名" }, ...], days: { "YYYY-MM-DD": { in:"HH:MM"|null, out:"HH:MM"|null, category:"normal"|"paid_leave"|"holiday_work", note:"", noteOpen:boolean } } }
   yearData: {}
 };
 
@@ -88,6 +90,42 @@ function formatDateLine(year, month, day, holidayName) {
   const wd = weekdayShortJa(year, month, day);
   const datePart = `${month}/${day} ${wd}`; // 半角スペース1つのみ
   return { datePart, holidayName: holidayName || "" };
+}
+
+function normalizeCompanyHolidayList(rawList) {
+  if (!Array.isArray(rawList)) return [];
+
+  const byDate = new Map();
+  for (const entry of rawList) {
+    let date = "";
+    let name = "";
+
+    if (typeof entry === "string") {
+      date = entry;
+    } else if (entry && typeof entry === "object" && typeof entry.date === "string") {
+      date = entry.date;
+      if (typeof entry.name === "string") name = entry.name.trim();
+    } else {
+      continue;
+    }
+
+    if (!parseYmd(date)) continue;
+
+    // 同日の重複がある場合は「名前あり」を優先
+    if (!byDate.has(date) || name) {
+      byDate.set(date, name.slice(0, 40));
+    }
+  }
+
+  return Array.from(byDate.entries())
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([date, name]) => ({ date, name }));
+}
+
+function normalizeCompanyHolidayName(name) {
+  const trimmed = String(name || "").trim();
+  if (trimmed) return trimmed.slice(0, 40);
+  return "";
 }
 
 /* ----------------------------
@@ -351,10 +389,12 @@ function buildHolidayMap(year) {
 const monthTabsInner = document.getElementById("monthTabsInner");
 const daysContainer = document.getElementById("daysContainer");
 
+const refreshButton = document.getElementById("refreshButton");
 const settingsButton = document.getElementById("settingsButton");
 const settingsDialog = document.getElementById("settingsDialog");
 const yearInput = document.getElementById("yearInput");
 const companyHolidayDate = document.getElementById("companyHolidayDate");
+const companyHolidayName = document.getElementById("companyHolidayName");
 const addCompanyHoliday = document.getElementById("addCompanyHoliday");
 const companyHolidayList = document.getElementById("companyHolidayList");
 const hourlyWageInput = document.getElementById("hourlyWageInput");
@@ -371,6 +411,19 @@ const sumOverHours = document.getElementById("sumOverHours");
 const sumRegularPay = document.getElementById("sumRegularPay");
 const sumOverPay = document.getElementById("sumOverPay");
 const sumTotalPay = document.getElementById("sumTotalPay");
+const quickMessage = document.getElementById("quickMessage");
+
+let quickMessageTimer = null;
+
+function showQuickMessage(text, durationMs = 2000) {
+  if (!quickMessage) return;
+  quickMessage.textContent = text;
+  quickMessage.classList.add("is-visible");
+  if (quickMessageTimer) clearTimeout(quickMessageTimer);
+  quickMessageTimer = window.setTimeout(() => {
+    quickMessage.classList.remove("is-visible");
+  }, durationMs);
+}
 
 function applySummaryToneClasses() {
   const workTargets = [sumWorkDays, sumTotalHours];
@@ -405,8 +458,15 @@ const ui = {
 
 function ensureYearData(year) {
   const y = String(year);
-  if (!state.yearData[y]) state.yearData[y] = { companyHolidays: [], days: {} };
-  return state.yearData[y];
+  if (!state.yearData || typeof state.yearData !== "object") state.yearData = {};
+  if (!state.yearData[y] || typeof state.yearData[y] !== "object") {
+    state.yearData[y] = { companyHolidays: [], days: {} };
+  }
+
+  const yd = state.yearData[y];
+  yd.companyHolidays = normalizeCompanyHolidayList(yd.companyHolidays);
+  if (!yd.days || typeof yd.days !== "object") yd.days = {};
+  return yd;
 }
 
 function getDayRecord(year, key) {
@@ -431,7 +491,16 @@ function setDayRecord(year, key, patch) {
 
 function companyHolidaySet(year) {
   const yd = ensureYearData(year);
-  return new Set(yd.companyHolidays || []);
+  return new Set((yd.companyHolidays || []).map(x => x.date));
+}
+
+function companyHolidayNameMap(year) {
+  const yd = ensureYearData(year);
+  const map = new Map();
+  for (const item of yd.companyHolidays || []) {
+    map.set(item.date, item.name || DEFAULT_COMPANY_HOLIDAY_NAME);
+  }
+  return map;
 }
 
 function isCompanyHoliday(year, key) {
@@ -497,13 +566,18 @@ function svgMemoIcon() {
   `;
 }
 
-function computeDayMetrics(year, key, holidayMap, companyHolidaySetForYear) {
+function computeDayMetrics(year, key, holidayMap, companyHolidaySetForYear, companyHolidayNameMapForYear) {
   const rec = getDayRecord(year, key);
   const p = parseYmd(key);
   const { isSun, isSat } = isWeekendUTC(p.y, p.mo, p.d);
 
   const isNatHoliday = holidayMap.has(key);
   const isCompHoliday = companyHolidaySetForYear.has(key);
+  const natHolidayName = holidayMap.get(key) || "";
+  const compHolidayName = companyHolidayNameMapForYear.get(key) || "";
+  const holidayName = (natHolidayName && compHolidayName && natHolidayName !== compHolidayName)
+    ? `${natHolidayName} / ${compHolidayName}`
+    : (natHolidayName || compHolidayName || "");
   const isOffDay = isNatHoliday || isCompHoliday || isSun || isSat;
   const isHolidayLike = isOffDay; // 日曜は休日扱い
   const isSunOrHoliday = isSun || isNatHoliday || isCompHoliday;
@@ -631,7 +705,7 @@ function computeDayMetrics(year, key, holidayMap, companyHolidaySetForYear) {
     isSunOrHoliday,
     isNatHoliday,
     isCompHoliday,
-    holidayName: holidayMap.get(key) || "",
+    holidayName,
     allowTimeArea,
     showButtons,
     isHolidayWork,
@@ -689,6 +763,7 @@ function renderDays() {
 
   const holidayMap = buildHolidayMap(year);
   const compSet = companyHolidaySet(year);
+  const compNameMap = companyHolidayNameMap(year);
 
   const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
   daysContainer.innerHTML = "";
@@ -696,7 +771,7 @@ function renderDays() {
   for (let day = 1; day <= daysInMonth; day++) {
     const key = ymd(year, month, day);
     const rec = getDayRecord(year, key);
-    const metrics = computeDayMetrics(year, key, holidayMap, compSet);
+    const metrics = computeDayMetrics(year, key, holidayMap, compSet, compNameMap);
 
     const { datePart, holidayName } = formatDateLine(year, month, day, metrics.holidayName);
 
@@ -836,6 +911,7 @@ function renderDays() {
         } else {
           setDayRecord(year, key, { in: "09:30" });
         }
+        showQuickMessage("今日も会社来てエラい✨", 2000);
         renderAll();
       };
 
@@ -845,6 +921,7 @@ function renderDays() {
         } else {
           setDayRecord(year, key, { out: "18:30" });
         }
+        showQuickMessage("1日お疲れさまでした☕", 2000);
         renderAll();
       };
 
@@ -927,6 +1004,7 @@ function computeMonthlySummary() {
 
   const holidayMap = buildHolidayMap(year);
   const compSet = companyHolidaySet(year);
+  const compNameMap = companyHolidayNameMap(year);
 
   const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
 
@@ -947,7 +1025,7 @@ function computeMonthlySummary() {
     const key = ymd(year, month, day);
     const rec = getDayRecord(year, key);
 
-    const m = computeDayMetrics(year, key, holidayMap, compSet);
+    const m = computeDayMetrics(year, key, holidayMap, compSet, compNameMap);
 
     // planned
     const w = isWeekendUTC(year, month, day);
@@ -1008,22 +1086,25 @@ function renderAll() {
 function openSettings() {
   yearInput.value = String(ui.selectedYear);
   hourlyWageInput.value = String(state.hourlyWage);
+  companyHolidayDate.value = "";
+  if (companyHolidayName) companyHolidayName.value = "";
 
   const yd = ensureYearData(ui.selectedYear);
   companyHolidayList.innerHTML = "";
-  for (const d of yd.companyHolidays) {
-    companyHolidayList.appendChild(renderCompanyHolidayItem(ui.selectedYear, d));
+  for (const item of yd.companyHolidays) {
+    companyHolidayList.appendChild(renderCompanyHolidayItem(ui.selectedYear, item));
   }
   settingsDialog.showModal();
 }
 
-function renderCompanyHolidayItem(year, dateKey) {
+function renderCompanyHolidayItem(year, holidayItem) {
   const row = document.createElement("div");
   row.className = "company-holiday-item";
 
   const text = document.createElement("div");
   text.className = "company-holiday-text tabnums";
-  text.textContent = dateKey;
+  const holidayLabel = holidayItem.name || DEFAULT_COMPANY_HOLIDAY_NAME;
+  text.textContent = `${holidayItem.date}（${holidayLabel}）`;
 
   const del = document.createElement("button");
   del.type = "button";
@@ -1031,7 +1112,7 @@ function renderCompanyHolidayItem(year, dateKey) {
   del.textContent = "削除";
   del.addEventListener("click", () => {
     const yd = ensureYearData(year);
-    yd.companyHolidays = (yd.companyHolidays || []).filter(x => x !== dateKey);
+    yd.companyHolidays = (yd.companyHolidays || []).filter(x => x.date !== holidayItem.date);
     saveState();
     openSettings(); // 再描画
     renderAll();
@@ -1043,9 +1124,11 @@ function renderCompanyHolidayItem(year, dateKey) {
 }
 
 settingsButton.addEventListener("click", openSettings);
+if (refreshButton) refreshButton.addEventListener("click", refreshToLatest);
 
 addCompanyHoliday.addEventListener("click", () => {
   const v = companyHolidayDate.value;
+  const holidayName = normalizeCompanyHolidayName(companyHolidayName?.value || "");
   if (!v) return;
 
   const p = parseYmd(v);
@@ -1057,9 +1140,11 @@ addCompanyHoliday.addEventListener("click", () => {
   }
 
   const yd = ensureYearData(ui.selectedYear);
-  const set = new Set(yd.companyHolidays || []);
-  set.add(v);
-  yd.companyHolidays = Array.from(set).sort();
+  const map = new Map((yd.companyHolidays || []).map(x => [x.date, x.name || ""]));
+  map.set(v, holidayName);
+  yd.companyHolidays = Array.from(map.entries())
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([date, name]) => ({ date, name }));
   saveState();
 
   openSettings();
@@ -1133,6 +1218,47 @@ importData.addEventListener("click", () => {
 /* ----------------------------
    PWA: service worker
 ---------------------------- */
+async function clearServiceWorkerAndCaches() {
+  if ("serviceWorker" in navigator) {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(registrations.map(reg => reg.unregister()));
+  }
+
+  if ("caches" in window) {
+    const cacheKeys = await caches.keys();
+    await Promise.all(cacheKeys.map(key => caches.delete(key)));
+  }
+}
+
+function handleHardReloadStep() {
+  const step = sessionStorage.getItem(HARD_RELOAD_STEP_KEY);
+  if (step === "1") {
+    sessionStorage.setItem(HARD_RELOAD_STEP_KEY, "2");
+    window.location.reload();
+    return true;
+  }
+  if (step === "2") {
+    sessionStorage.removeItem(HARD_RELOAD_STEP_KEY);
+  }
+  return false;
+}
+
+async function refreshToLatest() {
+  const confirmed = window.confirm("キャッシュを削除して最新版を読み込みます。データは消えません");
+  if (!confirmed) return;
+
+  if (refreshButton) refreshButton.disabled = true;
+  try {
+    await clearServiceWorkerAndCaches();
+    window.alert("キャッシュ削除が完了しました。最新版を再読み込みします。");
+    sessionStorage.setItem(HARD_RELOAD_STEP_KEY, "1");
+    window.location.reload();
+  } catch {
+    if (refreshButton) refreshButton.disabled = false;
+    window.alert("キャッシュ削除に失敗しました。通信状態を確認して再度お試しください。");
+  }
+}
+
 async function registerServiceWorker() {
   if (!("serviceWorker" in navigator)) return;
   try {
@@ -1146,6 +1272,8 @@ async function registerServiceWorker() {
    初期化
 ---------------------------- */
 function init() {
+  if (handleHardReloadStep()) return;
+
   ensureYearData(state.year);
   ui.selectedYear = state.year;
   applySummaryToneClasses();
