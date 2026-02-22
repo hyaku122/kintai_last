@@ -1,0 +1,24 @@
+{
+  "name": "勤怠PWA",
+  "short_name": "勤怠",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff7fb",
+  "theme_color": "#f7cfe3",
+  "lang": "ja-JP",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='192'%20height='192'%20viewBox='0%200%20192%20192'%3E%3Crect%20x='0'%20y='0'%20width='192'%20height='192'%20rx='40'%20fill='%23ffd6ea'/%3E%3Ccircle%20cx='96'%20cy='92'%20r='52'%20fill='%23ffffff'/%3E%3Cpath%20d='M96%2034c3%2015%207%2019%2022%2022c-15%203-19%207-22%2022c-3-15-7-19-22-22c15-3%2019-7%2022-22z'%20fill='%23ffd36e'/%3E%3Cpath%20d='M58%20120h76'%20stroke='%23ff7fb7'%20stroke-width='10'%20stroke-linecap='round'/%3E%3Cpath%20d='M58%20142h60'%20stroke='%231f8a5b'%20stroke-width='10'%20stroke-linecap='round'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='512'%20height='512'%20viewBox='0%200%20512%20512'%3E%3Crect%20x='0'%20y='0'%20width='512'%20height='512'%20rx='110'%20fill='%23ffd6ea'/%3E%3Ccircle%20cx='256'%20cy='246'%20r='140'%20fill='%23ffffff'/%3E%3Cpath%20d='M256%2090c8%2040%2019%2051%2059%2059c-40%208-51%2019-59%2059c-8-40-19-51-59-59c40-8%2051-19%2059-59z'%20fill='%23ffd36e'/%3E%3Cpath%20d='M156%20320h200'%20stroke='%23ff7fb7'%20stroke-width='26'%20stroke-linecap='round'/%3E%3Cpath%20d='M156%20378h160'%20stroke='%231f8a5b'%20stroke-width='26'%20stroke-linecap='round'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
