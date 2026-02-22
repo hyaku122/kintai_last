@@ -852,13 +852,26 @@ function renderDays() {
       inBtn.addEventListener("click", setInAuto);
       outBtn.addEventListener("click", setOutAuto);
 
-      inInput.addEventListener("change", () => {
-        setDayRecord(year, key, { in: inInput.value || null });
+      // iOS time pickerの操作中に再描画すると、ピッカーが閉じやすいので
+      // 入力中は状態保存＋集計更新のみを行い、フォーカス離脱時に再描画する。
+      const onTimeManualChange = (patch) => {
+        setDayRecord(year, key, patch);
+        computeMonthlySummary();
+      };
+
+      inInput.addEventListener("input", () => {
+        onTimeManualChange({ in: inInput.value || null });
+      });
+
+      outInput.addEventListener("input", () => {
+        onTimeManualChange({ out: outInput.value || null });
+      });
+
+      inInput.addEventListener("blur", () => {
         renderAll();
       });
 
-      outInput.addEventListener("change", () => {
-        setDayRecord(year, key, { out: outInput.value || null });
+      outInput.addEventListener("blur", () => {
         renderAll();
       });
 
@@ -968,7 +981,7 @@ function computeMonthlySummary() {
   const regularHoursText = `${(Math.round(regularHoursSum * 10) / 10).toFixed(1)}h`;
   const overtimeHoursText = `${(Math.round(overtimePremiumHoursSum * 10) / 10).toFixed(1)}h`;
 
-  sumWorkDays.textContent = `${workedDays}/${planned}`;
+  sumWorkDays.textContent = `${workedDays}日/${planned}日`;
   sumTotalHours.textContent = totalHoursText;
   sumRegularHours.textContent = regularHoursText;
   sumOverHours.textContent = overtimeHoursText;
