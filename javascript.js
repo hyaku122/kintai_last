@@ -591,7 +591,7 @@ function computeDayMetrics(year, key, holidayMap, companyHolidaySetForYear) {
   let regularHours = 0;
   let overtimePremiumHours = 0; // 割増対象時間
   let regularPay = 0;
-  let overtimePayExtra = 0; // 0.25分（割増分）
+  let overtimePayExtra = 0; // overtime pay (incl. premium)
   let totalPay = 0;
 
   if (category === CATEGORY.PAID_LEAVE) {
@@ -603,19 +603,18 @@ function computeDayMetrics(year, key, holidayMap, companyHolidaySetForYear) {
   } else if (isHolidayWork) {
     // 休日出勤: 全時間 1.25倍
     regularHours = 0;
-    overtimePremiumHours = hours; // 割増対象時間として残業時間に集計
-    const base = hours * wage;
-    overtimePayExtra = Math.round(base * 0.25); // 0.25分（割増分）
-    totalPay = Math.round(base + base * 0.25);
-    regularPay = Math.round(base); // 内訳として定時給に相当するベースも持つが、表示上は定時給料に合算するためここに入れる
+    overtimePremiumHours = hours;
+    overtimePayExtra = Math.round(hours * wage * 1.25);
+    totalPay = overtimePayExtra;
+    regularPay = 0;
   } else {
     // 平日通常
     regularHours = Math.min(8, hours);
     const over = Math.max(0, hours - 8);
     overtimePremiumHours = over;
     regularPay = Math.round(regularHours * wage);
-    overtimePayExtra = Math.round(over * wage * 0.25);
-    totalPay = Math.round(hours * wage + over * wage * 0.25);
+    overtimePayExtra = Math.round(over * wage * 1.25);
+    totalPay = regularPay + overtimePayExtra;
   }
 
   const workedText = (category === CATEGORY.PAID_LEAVE)
