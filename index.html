@@ -19,6 +19,14 @@
     </div>
 
     <div class="topbar-right">
+      <div id="todayCalendar" class="today-calendar" aria-label="今日の日付">
+        <div id="todayCalendarMonth" class="today-calendar-month tabnums">-</div>
+        <div class="today-calendar-body">
+          <div id="todayCalendarDay" class="today-calendar-day tabnums">-</div>
+          <div id="todayCalendarWeekday" class="today-calendar-weekday">-</div>
+        </div>
+      </div>
+      <button id="scrollTodayButton" class="icon-button star-button" type="button" aria-label="今日の日付へ移動">⭐</button>
       <button id="refreshButton" class="icon-button refresh-button" type="button" aria-label="最新版に更新">
         <svg class="refresh-svg" viewBox="0 0 64 64" width="28" height="28" aria-hidden="true" focusable="false">
           <path d="M44 14c8.9 4.9 13.8 14.9 11.3 25.2c-2.9 11.7-13.8 19.8-25.9 18.8C17.9 57 9 47.4 8.2 35.9c-.9-13.1 9.5-24 22.4-24c5.3 0 10.3 1.8 14.3 5"
@@ -45,12 +53,12 @@
     </div>
   </header>
 
-  <nav class="month-tabs" aria-label="月タブ">
-    <div id="monthTabsInner" class="month-tabs-inner"></div>
+  <nav class="month-tabs month-tabs-top" aria-label="月タブ">
+    <div id="monthTabsTopInner" class="month-tabs-inner"></div>
   </nav>
 
   <main class="main">
-    <section class="summary" aria-label="月次集計">
+    <section id="summarySection" class="summary" aria-label="月次集計">
       <div class="summary-grid">
         <div class="summary-item">
           <div class="summary-label">実働日数 / 予定稼働日数</div>
@@ -82,6 +90,10 @@
         </div>
       </div>
     </section>
+
+    <nav id="stickyMonthTabs" class="month-tabs month-tabs-sticky" aria-label="月タブ 固定">
+      <div id="monthTabsStickyInner" class="month-tabs-inner"></div>
+    </nav>
 
     <section class="days" aria-label="日別行">
       <div id="daysContainer" class="days-container"></div>
@@ -141,6 +153,12 @@
         <div class="field-row backup-action-row">
           <button id="importData" class="btn subtle backup-action-btn" type="button">バックアップ文字列を復元</button>
         </div>
+
+        <div class="divider"></div>
+
+        <div class="section-title">画像設定</div>
+        <div class="field-note">画像はこの端末に保存されます。バックアップ文字列には含まれません。</div>
+        <div id="reactionImageList" class="reaction-image-list" aria-label="リアクション画像設定"></div>
       </div>
 
       <div class="dialog-footer">
@@ -149,6 +167,12 @@
     </form>
   </dialog>
   <div id="quickMessage" class="quick-message" role="status" aria-live="polite"></div>
+  <div id="reactionOverlay" class="reaction-overlay" aria-live="polite" aria-atomic="true">
+    <div class="reaction-overlay-card">
+      <img id="reactionOverlayImage" class="reaction-overlay-image" alt="" hidden />
+      <div id="reactionOverlayText" class="reaction-overlay-text" hidden></div>
+    </div>
+  </div>
 
   <script src="javascript.js"></script>
 </body>

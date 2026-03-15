@@ -3,6 +3,8 @@
   --card: #ffffff;
   --ink: #1f2937;
   --muted: #6b7280;
+  --topbar-height: 64px;
+  --sticky-stack-height: 132px;
 
   --pastel-pink: #ffd6ea;
   --pastel-pink-2: #ffb7d5;
@@ -52,14 +54,19 @@ body{
 .topbar{
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 20;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
   padding: max(10px, env(safe-area-inset-top)) 12px 10px 12px;
   background: rgba(255,255,255,0.72);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+}
+
+.topbar-left{
+  flex: 0 0 auto;
 }
 
 .app-title{
@@ -72,6 +79,7 @@ body{
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
 }
 
 .icon-button{
@@ -124,15 +132,50 @@ body{
 }
 
 .month-tabs{
-  position: sticky;
-  top: 60px;
-  z-index: 9;
   background: rgba(255,255,255,0.60);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(229, 231, 235, 0.8);
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
+}
+
+.month-tabs-top{
+  position: relative;
+  z-index: 5;
+}
+
+.month-tabs-sticky{
+  position: sticky;
+  top: calc(var(--topbar-height) + 8px);
+  z-index: 9;
+  max-height: 0;
+  margin-bottom: 0;
+  border-bottom: none;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-6px);
+  transition: opacity 120ms ease, transform 120ms ease, max-height 120ms ease, margin-bottom 120ms ease;
+}
+
+.month-tabs-sticky .month-tabs-inner{
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.month-tabs-sticky.is-visible{
+  max-height: 80px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.month-tabs-sticky.is-visible .month-tabs-inner{
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .month-tabs-inner{
@@ -249,6 +292,7 @@ body{
   padding: 10px;
   box-shadow: 0 6px 18px rgba(31, 41, 55, 0.06);
   overflow: hidden;
+  scroll-margin-top: calc(var(--sticky-stack-height) + 12px);
 }
 
 .day-card.is-sat{
@@ -483,6 +527,10 @@ body{
   white-space: nowrap;
 }
 
+.worked-hours.is-absence{
+  color: var(--badge-red-text);
+}
+
 .note-area{
   margin-top: 10px;
   display: none;
@@ -631,6 +679,13 @@ body{
   margin-bottom: 8px;
 }
 
+.field-note{
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
 .company-holiday-list{
   display: flex;
   flex-direction: column;
@@ -684,6 +739,77 @@ body{
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 }
 
+.reaction-image-list{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reaction-image-item{
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  gap: 10px;
+  padding: 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(191, 225, 255, 0.55);
+  background: rgba(233, 245, 255, 0.72);
+}
+
+.reaction-image-preview{
+  width: 76px;
+  height: 76px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(191, 225, 255, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reaction-image-preview img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.reaction-image-placeholder{
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 700;
+  text-align: center;
+  padding: 8px;
+}
+
+.reaction-image-body{
+  min-width: 0;
+}
+
+.reaction-image-title{
+  font-size: 13px;
+  font-weight: 900;
+  margin-bottom: 4px;
+}
+
+.reaction-image-meta{
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.4;
+  margin-bottom: 8px;
+  word-break: break-word;
+}
+
+.reaction-image-actions{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.reaction-image-actions input{
+  display: none;
+}
+
 .quick-message{
   position: fixed;
   left: 50%;
@@ -709,4 +835,144 @@ body{
 .quick-message.is-visible{
   opacity: 1;
   transform: translate(-50%, 0);
+}
+
+.reaction-overlay{
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 40;
+  transition: opacity 160ms ease;
+}
+
+.reaction-overlay.is-visible{
+  opacity: 1;
+}
+
+.reaction-overlay-card{
+  width: min(340px, calc(100vw - 48px));
+  min-height: 120px;
+  border-radius: 24px;
+  padding: 12px;
+  background: rgba(255,255,255,0.88);
+  border: 1px solid rgba(255,255,255,0.82);
+  box-shadow: 0 18px 48px rgba(31, 41, 55, 0.22);
+  backdrop-filter: blur(12px);
+}
+
+.reaction-overlay-image{
+  width: 100%;
+  max-height: min(52vh, 360px);
+  object-fit: contain;
+  display: block;
+  border-radius: 18px;
+}
+
+.reaction-overlay-text{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  padding: 16px;
+  font-size: 18px;
+  font-weight: 900;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.today-calendar{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 72px;
+  padding: 6px 10px 7px;
+  border-radius: 16px;
+  border: 1px solid rgba(191, 225, 255, 0.78);
+  background: rgba(255,255,255,0.88);
+  box-shadow: 0 4px 14px rgba(31, 41, 55, 0.08);
+}
+
+.today-calendar-month{
+  font-size: 10px;
+  font-weight: 900;
+  color: var(--muted);
+  line-height: 1.2;
+}
+
+.today-calendar-body{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 3px;
+}
+
+.today-calendar-day{
+  min-width: 30px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #e5f6bc;
+  color: #46681b;
+  font-size: 16px;
+  font-weight: 900;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.today-calendar-weekday{
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--muted);
+}
+
+.star-button{
+  font-size: 18px;
+  line-height: 1;
+  background: rgba(255, 241, 168, 0.72);
+  border: 1px solid rgba(230, 199, 124, 0.72);
+}
+
+.star-button:hover{
+  background: rgba(255, 241, 168, 0.92);
+}
+
+@media (max-width: 520px){
+  .today-calendar{
+    min-width: 64px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .today-calendar-day{
+    min-width: 28px;
+    font-size: 14px;
+  }
+
+  .icon-button{
+    min-width: 40px;
+    min-height: 40px;
+    padding: 7px;
+  }
+}
+
+@media (max-width: 400px){
+  .topbar{
+    gap: 6px;
+  }
+
+  .topbar-right{
+    gap: 6px;
+  }
+
+  .today-calendar-weekday{
+    display: none;
+  }
+
+  .today-calendar-body{
+    gap: 0;
+  }
 }
