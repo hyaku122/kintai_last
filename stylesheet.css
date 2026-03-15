@@ -896,20 +896,24 @@ body{
   box-shadow: 0 8px 18px rgba(31, 41, 55, 0.10);
 }
 
+.today-calendar-panel{
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 1px 10px;
+}
+
 .today-calendar-title{
   font-size: 12px;
   font-weight: 900;
   color: var(--ink);
   line-height: 1;
   white-space: nowrap;
+  padding-top: 2px;
 }
 
-.today-calendar-header{
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 3px;
+.today-calendar-spacer{
+  min-width: 0;
 }
 
 .today-calendar-weekdays,
@@ -919,12 +923,12 @@ body{
 }
 
 .today-calendar-weekdays{
-  gap: 2px 1px;
+  gap: 1px 1px;
   min-width: 0;
 }
 
 .today-calendar-grid{
-  gap: 2px 1px;
+  gap: 1px 1px;
 }
 
 .today-calendar-weekday,
@@ -932,7 +936,7 @@ body{
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 18px;
+  min-height: 16px;
   font-size: 10px;
   font-weight: 800;
   line-height: 1;
@@ -940,6 +944,16 @@ body{
 
 .today-calendar-weekday{
   color: #6b7280;
+}
+
+.today-calendar-weekday.is-sat,
+.today-calendar-date.is-sat{
+  color: var(--sat-text);
+}
+
+.today-calendar-weekday.is-sunholiday,
+.today-calendar-date.is-sunholiday{
+  color: var(--sun-text);
 }
 
 .today-calendar-date{
@@ -965,12 +979,12 @@ body{
 
   .today-calendar-weekday,
   .today-calendar-date{
-    min-height: 17px;
+    min-height: 15px;
     font-size: 9px;
   }
 
-  .today-calendar-header{
-    gap: 8px;
+  .today-calendar-panel{
+    gap: 1px 8px;
   }
 
   .icon-button{

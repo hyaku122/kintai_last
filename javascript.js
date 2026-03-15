@@ -619,27 +619,35 @@ function renderTodayCalendar() {
   const prevMonthDays = new Date(Date.UTC(today.year, today.month - 1, 0)).getUTCDate();
   const totalCells = (firstDow + daysInMonth) <= 35 ? 35 : 42;
   const weekdayLabels = ["日", "月", "火", "水", "木", "金", "土"];
+  const holidayMap = buildHolidayMap(today.year);
+  const companyHolidayDates = companyHolidaySet(today.year);
 
   todayCalendar.innerHTML = "";
 
-  const headerRow = document.createElement("div");
-  headerRow.className = "today-calendar-header";
+  const panel = document.createElement("div");
+  panel.className = "today-calendar-panel";
 
   const monthLabel = document.createElement("div");
   monthLabel.className = "today-calendar-title tabnums";
   monthLabel.textContent = `${today.month}月`;
-  headerRow.appendChild(monthLabel);
+  panel.appendChild(monthLabel);
 
   const weekdayGrid = document.createElement("div");
   weekdayGrid.className = "today-calendar-weekdays";
-  for (const label of weekdayLabels) {
+  for (const [index, label] of weekdayLabels.entries()) {
     const cell = document.createElement("div");
     cell.className = "today-calendar-weekday";
+    if (index === 0) cell.classList.add("is-sunholiday");
+    if (index === 6) cell.classList.add("is-sat");
     cell.textContent = label;
     weekdayGrid.appendChild(cell);
   }
-  headerRow.appendChild(weekdayGrid);
-  todayCalendar.appendChild(headerRow);
+  panel.appendChild(weekdayGrid);
+
+  const spacer = document.createElement("div");
+  spacer.className = "today-calendar-spacer";
+  spacer.setAttribute("aria-hidden", "true");
+  panel.appendChild(spacer);
 
   const dateGrid = document.createElement("div");
   dateGrid.className = "today-calendar-grid tabnums";
@@ -657,6 +665,11 @@ function renderTodayCalendar() {
       cell.classList.add("is-outside");
     } else {
       cell.textContent = String(dayNumber);
+      const cellKey = ymd(today.year, today.month, dayNumber);
+      const weekend = isWeekendUTC(today.year, today.month, dayNumber);
+      const isHoliday = holidayMap.has(cellKey) || companyHolidayDates.has(cellKey);
+      if (weekend.isSat) cell.classList.add("is-sat");
+      if (weekend.isSun || isHoliday) cell.classList.add("is-sunholiday");
       if (dayNumber === today.day) {
         cell.classList.add("is-today");
       }
@@ -665,7 +678,8 @@ function renderTodayCalendar() {
     dateGrid.appendChild(cell);
   }
 
-  todayCalendar.appendChild(dateGrid);
+  panel.appendChild(dateGrid);
+  todayCalendar.appendChild(panel);
 }
 
 function applySummaryToneClasses() {
