@@ -439,18 +439,11 @@ function buildHolidayMap(year) {
 /* ----------------------------
    UI生成
 ---------------------------- */
-const topbar = document.querySelector(".topbar");
-const summarySection = document.getElementById("summarySection");
 const monthTabsTopInner = document.getElementById("monthTabsTopInner");
-const monthTabsStickyInner = document.getElementById("monthTabsStickyInner");
-const stickyMonthTabs = document.getElementById("stickyMonthTabs");
-const monthTabsInners = [monthTabsTopInner, monthTabsStickyInner].filter(Boolean);
+const monthTabsInners = [monthTabsTopInner].filter(Boolean);
 const daysContainer = document.getElementById("daysContainer");
 
-const todayCalendarMonth = document.getElementById("todayCalendarMonth");
-const todayCalendarDay = document.getElementById("todayCalendarDay");
-const todayCalendarWeekday = document.getElementById("todayCalendarWeekday");
-const scrollTodayButton = document.getElementById("scrollTodayButton");
+const todayCalendar = document.getElementById("todayCalendar");
 
 const refreshButton = document.getElementById("refreshButton");
 const settingsButton = document.getElementById("settingsButton");
@@ -482,7 +475,6 @@ const reactionOverlayText = document.getElementById("reactionOverlayText");
 
 let quickMessageTimer = null;
 let reactionOverlayTimer = null;
-let layoutSyncFrame = 0;
 let reactionImageDbPromise = null;
 
 function showQuickMessage(text, durationMs = 2000) {
@@ -618,33 +610,58 @@ async function showReactionForSlot(slotId) {
 }
 
 function renderTodayCalendar() {
+  if (!todayCalendar) return;
+
   const today = getTodayContext();
-  if (todayCalendarMonth) todayCalendarMonth.textContent = `${today.month}月`;
-  if (todayCalendarDay) todayCalendarDay.textContent = String(today.day);
-  if (todayCalendarWeekday) todayCalendarWeekday.textContent = weekdayShortJa(today.year, today.month, today.day);
-}
+  const firstDay = new Date(Date.UTC(today.year, today.month - 1, 1));
+  const firstDow = firstDay.getUTCDay();
+  const daysInMonth = new Date(Date.UTC(today.year, today.month, 0)).getUTCDate();
+  const prevMonthDays = new Date(Date.UTC(today.year, today.month - 1, 0)).getUTCDate();
+  const totalCells = (firstDow + daysInMonth) <= 35 ? 35 : 42;
+  const weekdayLabels = ["日", "月", "火", "水", "木", "金", "土"];
 
-function updateStickyMetrics() {
-  const topbarHeight = Math.ceil(topbar?.getBoundingClientRect().height || 0);
-  const stickyTabsHeight = Math.ceil(stickyMonthTabs?.getBoundingClientRect().height || 0);
-  document.documentElement.style.setProperty("--topbar-height", `${topbarHeight}px`);
-  document.documentElement.style.setProperty("--sticky-stack-height", `${topbarHeight + stickyTabsHeight}px`);
-}
+  todayCalendar.innerHTML = "";
 
-function syncStickyMonthTabsVisibility() {
-  if (!stickyMonthTabs || !summarySection) return;
-  const topbarHeight = Math.ceil(topbar?.getBoundingClientRect().height || 0);
-  const summaryBottom = summarySection.getBoundingClientRect().bottom;
-  stickyMonthTabs.classList.toggle("is-visible", summaryBottom <= (topbarHeight + 8));
-  updateStickyMetrics();
-}
+  const monthLabel = document.createElement("div");
+  monthLabel.className = "today-calendar-title tabnums";
+  monthLabel.textContent = `${today.month}月`;
+  todayCalendar.appendChild(monthLabel);
 
-function scheduleLayoutSync() {
-  if (layoutSyncFrame) return;
-  layoutSyncFrame = window.requestAnimationFrame(() => {
-    layoutSyncFrame = 0;
-    syncStickyMonthTabsVisibility();
-  });
+  const weekdayGrid = document.createElement("div");
+  weekdayGrid.className = "today-calendar-weekdays";
+  for (const label of weekdayLabels) {
+    const cell = document.createElement("div");
+    cell.className = "today-calendar-weekday";
+    cell.textContent = label;
+    weekdayGrid.appendChild(cell);
+  }
+  todayCalendar.appendChild(weekdayGrid);
+
+  const dateGrid = document.createElement("div");
+  dateGrid.className = "today-calendar-grid tabnums";
+
+  for (let index = 0; index < totalCells; index++) {
+    const cell = document.createElement("div");
+    cell.className = "today-calendar-date";
+
+    const dayNumber = index - firstDow + 1;
+    if (dayNumber < 1) {
+      cell.textContent = String(prevMonthDays + dayNumber);
+      cell.classList.add("is-outside");
+    } else if (dayNumber > daysInMonth) {
+      cell.textContent = String(dayNumber - daysInMonth);
+      cell.classList.add("is-outside");
+    } else {
+      cell.textContent = String(dayNumber);
+      if (dayNumber === today.day) {
+        cell.classList.add("is-today");
+      }
+    }
+
+    dateGrid.appendChild(cell);
+  }
+
+  todayCalendar.appendChild(dateGrid);
 }
 
 function applySummaryToneClasses() {
@@ -1437,7 +1454,6 @@ function renderAll() {
 
   computeMonthlySummary();
   renderDays();
-  scheduleLayoutSync();
 }
 
 /* ----------------------------
@@ -1583,8 +1599,8 @@ function renderCompanyHolidayItem(year, holidayItem) {
 }
 
 settingsButton.addEventListener("click", openSettings);
-if (scrollTodayButton) {
-  scrollTodayButton.addEventListener("click", () => {
+if (todayCalendar) {
+  todayCalendar.addEventListener("click", () => {
     jumpToToday("smooth");
   });
 }
@@ -1756,8 +1772,5 @@ function init() {
 
   registerServiceWorker();
 }
-
-window.addEventListener("scroll", scheduleLayoutSync, { passive: true });
-window.addEventListener("resize", scheduleLayoutSync);
 
 init();

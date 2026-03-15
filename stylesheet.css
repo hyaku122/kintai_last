@@ -3,8 +3,6 @@
   --card: #ffffff;
   --ink: #1f2937;
   --muted: #6b7280;
-  --topbar-height: 64px;
-  --sticky-stack-height: 132px;
 
   --pastel-pink: #ffd6ea;
   --pastel-pink-2: #ffb7d5;
@@ -37,10 +35,14 @@
 
 html, body{
   height: 100%;
+  overflow: hidden;
 }
 
 body{
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", "Meiryo", sans-serif;
   background: var(--bg);
   color: var(--ink);
@@ -52,12 +54,11 @@ body{
 }
 
 .topbar{
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  position: relative;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
   gap: 10px;
   padding: max(10px, env(safe-area-inset-top)) 12px 10px 12px;
   background: rgba(255,255,255,0.72);
@@ -66,7 +67,7 @@ body{
 }
 
 .topbar-left{
-  flex: 0 0 auto;
+  padding-top: 4px;
 }
 
 .app-title{
@@ -77,9 +78,9 @@ body{
 
 .topbar-right{
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
-  min-width: 0;
+  flex: 0 0 auto;
 }
 
 .icon-button{
@@ -138,44 +139,12 @@ body{
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
+  flex: 0 0 auto;
 }
 
 .month-tabs-top{
   position: relative;
   z-index: 5;
-}
-
-.month-tabs-sticky{
-  position: sticky;
-  top: calc(var(--topbar-height) + 8px);
-  z-index: 9;
-  max-height: 0;
-  margin-bottom: 0;
-  border-bottom: none;
-  overflow: hidden;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(-6px);
-  transition: opacity 120ms ease, transform 120ms ease, max-height 120ms ease, margin-bottom 120ms ease;
-}
-
-.month-tabs-sticky .month-tabs-inner{
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-.month-tabs-sticky.is-visible{
-  max-height: 80px;
-  margin-bottom: 12px;
-  border-bottom: 1px solid rgba(229, 231, 235, 0.8);
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
-}
-
-.month-tabs-sticky.is-visible .month-tabs-inner{
-  padding-top: 10px;
-  padding-bottom: 10px;
 }
 
 .month-tabs-inner{
@@ -209,8 +178,12 @@ body{
 }
 
 .main{
-  padding: 12px;
-  max-width: 980px;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  width: min(980px, 100%);
+  padding: 12px 12px 0;
   margin: 0 auto;
   overflow-x: hidden; /* main自体も横スクロール禁止 */
 }
@@ -222,6 +195,7 @@ body{
   padding: 12px;
   box-shadow: var(--shadow);
   margin-bottom: 12px;
+  flex: 0 0 auto;
 }
 
 .summary-grid{
@@ -278,11 +252,21 @@ body{
   text-overflow: ellipsis;
 }
 
+.days{
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: calc(14px + env(safe-area-inset-bottom));
+  -webkit-overflow-scrolling: touch;
+}
+
 .days-container{
   display: flex;
   flex-direction: column;
   gap: 10px;
   overflow-x: hidden; /* 日別行でも横スクロール禁止 */
+  padding-bottom: 12px;
 }
 
 .day-card{
@@ -292,7 +276,7 @@ body{
   padding: 10px;
   box-shadow: 0 6px 18px rgba(31, 41, 55, 0.06);
   overflow: hidden;
-  scroll-margin-top: calc(var(--sticky-stack-height) + 12px);
+  scroll-margin-top: 12px;
 }
 
 .day-card.is-sat{
@@ -886,70 +870,94 @@ body{
 }
 
 .today-calendar{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 72px;
-  padding: 6px 10px 7px;
-  border-radius: 16px;
+  appearance: none;
+  -webkit-appearance: none;
   border: 1px solid rgba(191, 225, 255, 0.78);
-  background: rgba(255,255,255,0.88);
+  background: rgba(255,255,255,0.94);
   box-shadow: 0 4px 14px rgba(31, 41, 55, 0.08);
+  border-radius: 20px;
+  padding: 10px 10px 12px;
+  flex: 1 1 auto;
+  width: min(220px, calc(100vw - 152px));
+  min-width: 140px;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
 }
 
-.today-calendar-month{
-  font-size: 10px;
+.today-calendar:active{
+  transform: scale(0.985);
+}
+
+.today-calendar:hover{
+  background: rgba(255,255,255,0.98);
+  box-shadow: 0 8px 18px rgba(31, 41, 55, 0.10);
+}
+
+.today-calendar-title{
+  font-size: 13px;
   font-weight: 900;
-  color: var(--muted);
-  line-height: 1.2;
+  color: var(--ink);
+  margin-bottom: 8px;
 }
 
-.today-calendar-body{
+.today-calendar-weekdays,
+.today-calendar-grid{
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.today-calendar-weekdays{
+  gap: 4px 2px;
+  margin-bottom: 4px;
+}
+
+.today-calendar-grid{
+  gap: 4px 2px;
+}
+
+.today-calendar-weekday,
+.today-calendar-date{
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 3px;
-}
-
-.today-calendar-day{
-  min-width: 30px;
-  padding: 3px 8px;
-  border-radius: 999px;
-  background: #e5f6bc;
-  color: #46681b;
-  font-size: 16px;
-  font-weight: 900;
-  text-align: center;
-  line-height: 1.2;
+  justify-content: center;
+  min-height: 24px;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
 }
 
 .today-calendar-weekday{
-  font-size: 12px;
-  font-weight: 900;
-  color: var(--muted);
+  color: #6b7280;
 }
 
-.star-button{
-  font-size: 18px;
-  line-height: 1;
-  background: rgba(255, 241, 168, 0.72);
-  border: 1px solid rgba(230, 199, 124, 0.72);
+.today-calendar-date{
+  color: #1f2937;
+  border-radius: 999px;
 }
 
-.star-button:hover{
-  background: rgba(255, 241, 168, 0.92);
+.today-calendar-date.is-outside{
+  color: #c1c7d0;
+}
+
+.today-calendar-date.is-today{
+  background: #2f80ed;
+  color: #ffffff;
 }
 
 @media (max-width: 520px){
   .today-calendar{
-    min-width: 64px;
-    padding-left: 8px;
-    padding-right: 8px;
+    width: min(196px, calc(100vw - 144px));
+    min-width: 128px;
+    padding: 8px 8px 10px;
   }
 
-  .today-calendar-day{
-    min-width: 28px;
-    font-size: 14px;
+  .today-calendar-weekday,
+  .today-calendar-date{
+    min-height: 21px;
+    font-size: 10px;
   }
 
   .icon-button{
@@ -968,11 +976,10 @@ body{
     gap: 6px;
   }
 
-  .today-calendar-weekday{
-    display: none;
-  }
-
-  .today-calendar-body{
-    gap: 0;
+  .today-calendar{
+    width: min(176px, calc(100vw - 138px));
+    min-width: 116px;
+    padding-left: 6px;
+    padding-right: 6px;
   }
 }
