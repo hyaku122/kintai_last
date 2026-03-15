@@ -622,10 +622,13 @@ function renderTodayCalendar() {
 
   todayCalendar.innerHTML = "";
 
+  const headerRow = document.createElement("div");
+  headerRow.className = "today-calendar-header";
+
   const monthLabel = document.createElement("div");
   monthLabel.className = "today-calendar-title tabnums";
   monthLabel.textContent = `${today.month}月`;
-  todayCalendar.appendChild(monthLabel);
+  headerRow.appendChild(monthLabel);
 
   const weekdayGrid = document.createElement("div");
   weekdayGrid.className = "today-calendar-weekdays";
@@ -635,7 +638,8 @@ function renderTodayCalendar() {
     cell.textContent = label;
     weekdayGrid.appendChild(cell);
   }
-  todayCalendar.appendChild(weekdayGrid);
+  headerRow.appendChild(weekdayGrid);
+  todayCalendar.appendChild(headerRow);
 
   const dateGrid = document.createElement("div");
   dateGrid.className = "today-calendar-grid tabnums";

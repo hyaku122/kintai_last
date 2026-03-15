@@ -876,10 +876,10 @@ body{
   background: rgba(255,255,255,0.94);
   box-shadow: 0 4px 14px rgba(31, 41, 55, 0.08);
   border-radius: 20px;
-  padding: 10px 10px 12px;
+  padding: 8px 10px 9px;
   flex: 1 1 auto;
-  width: min(220px, calc(100vw - 152px));
-  min-width: 140px;
+  width: min(262px, calc(100vw - 144px));
+  min-width: 176px;
   text-align: left;
   color: inherit;
   font: inherit;
@@ -897,10 +897,19 @@ body{
 }
 
 .today-calendar-title{
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 900;
   color: var(--ink);
-  margin-bottom: 8px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.today-calendar-header{
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 3px;
 }
 
 .today-calendar-weekdays,
@@ -910,12 +919,12 @@ body{
 }
 
 .today-calendar-weekdays{
-  gap: 4px 2px;
-  margin-bottom: 4px;
+  gap: 2px 1px;
+  min-width: 0;
 }
 
 .today-calendar-grid{
-  gap: 4px 2px;
+  gap: 2px 1px;
 }
 
 .today-calendar-weekday,
@@ -923,8 +932,8 @@ body{
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 24px;
-  font-size: 11px;
+  min-height: 18px;
+  font-size: 10px;
   font-weight: 800;
   line-height: 1;
 }
@@ -949,15 +958,19 @@ body{
 
 @media (max-width: 520px){
   .today-calendar{
-    width: min(196px, calc(100vw - 144px));
-    min-width: 128px;
-    padding: 8px 8px 10px;
+    width: min(236px, calc(100vw - 138px));
+    min-width: 152px;
+    padding: 7px 8px 8px;
   }
 
   .today-calendar-weekday,
   .today-calendar-date{
-    min-height: 21px;
-    font-size: 10px;
+    min-height: 17px;
+    font-size: 9px;
+  }
+
+  .today-calendar-header{
+    gap: 8px;
   }
 
   .icon-button{
@@ -977,9 +990,13 @@ body{
   }
 
   .today-calendar{
-    width: min(176px, calc(100vw - 138px));
-    min-width: 116px;
+    width: min(214px, calc(100vw - 132px));
+    min-width: 138px;
     padding-left: 6px;
     padding-right: 6px;
+  }
+
+  .today-calendar-title{
+    font-size: 11px;
   }
 }
