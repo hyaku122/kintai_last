@@ -223,8 +223,8 @@ body{
 }
 
 .summary-item-regular{
-  background: linear-gradient(180deg, rgba(255, 248, 220, 0.9) 0%, rgba(255, 255, 255, 0.96) 100%);
-  border-color: rgba(230, 199, 124, 0.8);
+  background: linear-gradient(180deg, rgba(233, 245, 255, 0.90) 0%, rgba(255, 255, 255, 0.96) 100%);
+  border-color: rgba(167, 205, 237, 0.82);
 }
 
 .summary-item-overtime{
