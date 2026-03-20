@@ -28,6 +28,11 @@
   --badge-red-bg: #fff1f1;
   --badge-red-text: #c81e1e;
 
+  --today-card-bg: linear-gradient(180deg, rgba(233, 245, 255, 0.96) 0%, rgba(217, 240, 255, 0.88) 100%);
+  --today-card-border: rgba(47, 128, 237, 0.46);
+  --today-card-shadow: 0 10px 26px rgba(47, 128, 237, 0.16);
+  --today-card-text: #1e56c5;
+
   --shadow: 0 8px 24px rgba(31, 41, 55, 0.08);
 }
 
@@ -277,6 +282,7 @@ body{
   box-shadow: 0 6px 18px rgba(31, 41, 55, 0.06);
   overflow: hidden;
   scroll-margin-top: 12px;
+  transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 
 .day-card.is-sat{
@@ -287,6 +293,49 @@ body{
 .day-card.is-sunholiday{
   background: var(--sun-bg);
   border-color: rgba(255, 203, 214, 0.85);
+}
+
+.day-card.is-today{
+  background: var(--today-card-bg);
+  border-color: var(--today-card-border);
+  box-shadow: var(--today-card-shadow);
+}
+
+.day-card.is-today .date-text{
+  color: var(--today-card-text);
+}
+
+.day-card.is-today .holiday-name{
+  color: rgba(30, 86, 197, 0.76);
+}
+
+.day-card.is-today.is-flashing{
+  animation: today-card-flash 900ms ease-out 1;
+}
+
+@keyframes today-card-flash{
+  0%{
+    box-shadow: var(--today-card-shadow), 0 0 0 0 rgba(47, 128, 237, 0);
+    filter: brightness(1);
+  }
+  38%{
+    box-shadow: 0 16px 34px rgba(47, 128, 237, 0.24), 0 0 0 8px rgba(47, 128, 237, 0.18);
+    filter: brightness(1.035);
+  }
+  100%{
+    box-shadow: var(--today-card-shadow), 0 0 0 0 rgba(47, 128, 237, 0);
+    filter: brightness(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .day-card{
+    transition: none;
+  }
+
+  .day-card.is-today.is-flashing{
+    animation: none;
+  }
 }
 
 .day-row{

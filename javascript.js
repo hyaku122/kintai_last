@@ -891,6 +891,28 @@ function scrollToDateCard(dateKey, behavior = "smooth") {
   return true;
 }
 
+function flashDateCard(dateKey, delay = 0) {
+  const run = () => {
+    const target = daysContainer.querySelector(`[data-date-key="${dateKey}"]`);
+    if (!target) return;
+    target.classList.remove("is-flashing");
+    void target.offsetWidth;
+    target.classList.add("is-flashing");
+    target.addEventListener("animationend", () => {
+      target.classList.remove("is-flashing");
+    }, { once: true });
+  };
+
+  if (delay > 0) {
+    window.setTimeout(() => {
+      window.requestAnimationFrame(run);
+    }, delay);
+    return;
+  }
+
+  window.requestAnimationFrame(run);
+}
+
 function jumpToToday(behavior = "smooth") {
   const today = getTodayContext();
   ensureYearData(today.year);
@@ -903,6 +925,7 @@ function jumpToToday(behavior = "smooth") {
   scrollAllMonthTabsToActive(behavior);
   window.requestAnimationFrame(() => {
     scrollToDateCard(today.key, behavior);
+    flashDateCard(today.key, behavior === "smooth" ? 280 : 0);
   });
 }
 
@@ -1147,6 +1170,8 @@ function chooseCategory(current) {
 function renderDays() {
   const year = ui.selectedYear;
   const month = ui.selectedMonth;
+  const today = getTodayContext();
+  const isCurrentMonth = (year === today.year && month === today.month);
 
   const holidayMap = buildHolidayMap(year);
   const compSet = companyHolidaySet(year);
@@ -1167,6 +1192,7 @@ function renderDays() {
     card.dataset.dateKey = key;
     if (metrics.isSat) card.classList.add("is-sat");
     if (metrics.isSunOrHoliday) card.classList.add("is-sunholiday");
+    if (isCurrentMonth && key === today.key) card.classList.add("is-today");
 
     const rowTop = document.createElement("div");
     rowTop.className = "day-row day-row-top";
@@ -1786,6 +1812,7 @@ function init() {
   scrollAllMonthTabsToActive("auto");
   window.requestAnimationFrame(() => {
     scrollToDateCard(today.key, "auto");
+    flashDateCard(today.key);
   });
 
   registerServiceWorker();
