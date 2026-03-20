@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">刻の標 app icon</title>
+  <desc id="desc">Single kanji icon with a champagne gold "刻" on an indigo to muted violet gradient.</desc>
+  <defs>
+    <linearGradient id="bg" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#182A5B" />
+      <stop offset="100%" stop-color="#73658A" />
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bg)" />
+  <text
+    x="512"
+    y="548"
+    fill="#D8C08A"
+    font-family="'Yu Mincho', 'Hiragino Mincho ProN', 'Noto Serif JP', 'MS PMincho', serif"
+    font-size="580"
+    font-weight="700"
+    text-anchor="middle"
+    dominant-baseline="middle"
+  >刻</text>
+</svg>

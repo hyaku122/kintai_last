@@ -1,13 +1,17 @@
 "use strict";
 
-const CACHE_NAME = "kintai-pwa-cache-v1";
+const CACHE_NAME = "kintai-pwa-cache-v2";
 const ASSETS = [
   "./",
   "./index.html",
   "./stylesheet.css",
   "./javascript.js",
   "./manifest.webmanifest",
-  "./service-worker.js"
+  "./service-worker.js",
+  "./assets/icons/app-icon.svg",
+  "./assets/icons/apple-touch-icon.png",
+  "./assets/icons/icon-192.png",
+  "./assets/icons/icon-512.png"
 ];
 
 self.addEventListener("install", (event) => {
