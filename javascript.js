@@ -103,6 +103,10 @@ function hhmmFromMinutes(total) {
   return `${pad2(h)}:${pad2(m)}`;
 }
 
+function formatYen(value) {
+  return `${Math.round(value).toLocaleString(LOCALE)}円`;
+}
+
 function roundToMinuteHHMM() {
   const p = nowTokyoParts();
   return `${pad2(p.hour)}:${pad2(p.minute)}`;
@@ -1017,9 +1021,12 @@ function computeDayMetrics(year, key, holidayMap, companyHolidaySetForYear, comp
   // - 休日出勤日は判定表示なし
   // - 初期空欄、入力（ボタン押下 or 時刻入力）後に表示
   const judgeLines = [];
-  let judgeType = null; // "blue" or "red" or null
+  let judgeType = null; // "blue" or "red" or "orange" or null
 
-  if (!isHolidayWork && category !== CATEGORY.PAID_LEAVE && category !== CATEGORY.ABSENCE) {
+  if (category === CATEGORY.PAID_LEAVE) {
+    judgeLines.push("有給");
+    judgeType = "orange";
+  } else if (!isHolidayWork && category !== CATEGORY.ABSENCE) {
     const inMin = minutesFromHHMM(rec.in);
     const outMin = minutesFromHHMM(rec.out);
     const hasAny = (inMin != null) || (outMin != null);
@@ -1240,6 +1247,7 @@ function renderDays() {
     worked.className = "worked-hours tabnums";
     worked.textContent = metrics.workedText;
     if (metrics.isAbsent) worked.classList.add("is-absence");
+    if (metrics.category === CATEGORY.PAID_LEAVE) worked.classList.add("is-paid-leave");
 
     workedCell.appendChild(worked);
 
@@ -1438,6 +1446,8 @@ function computeMonthlySummary() {
   let regularPaySum = 0;
   let overtimePayExtraSum = 0;
   let totalPaySum = 0;
+  let projectedTotalPaySum = 0;
+  const regularDayPay = Math.round(8 * state.hourlyWage);
 
   for (let day = 1; day <= daysInMonth; day++) {
     const key = ymd(year, month, day);
@@ -1469,6 +1479,12 @@ function computeMonthlySummary() {
     regularPaySum += m.regularPay;
     overtimePayExtraSum += m.overtimePayExtra;
     totalPaySum += m.totalPay;
+
+    if (m.category === CATEGORY.NORMAL && !m.hasWorkRecord && !m.isOffDay) {
+      projectedTotalPaySum += regularDayPay;
+    } else {
+      projectedTotalPaySum += m.totalPay;
+    }
   }
 
   const totalHours = totalMinutes / 60;
@@ -1481,9 +1497,9 @@ function computeMonthlySummary() {
   sumRegularHours.textContent = regularHoursText;
   sumOverHours.textContent = overtimeHoursText;
 
-  sumRegularPay.textContent = `${Math.round(regularPaySum).toLocaleString(LOCALE)}円`;
-  sumOverPay.textContent = `${Math.round(overtimePayExtraSum).toLocaleString(LOCALE)}円`;
-  sumTotalPay.textContent = `${Math.round(totalPaySum).toLocaleString(LOCALE)}円`;
+  sumRegularPay.textContent = formatYen(regularPaySum);
+  sumOverPay.textContent = formatYen(overtimePayExtraSum);
+  sumTotalPay.textContent = `${formatYen(totalPaySum)} / ${formatYen(projectedTotalPaySum)}`;
 }
 
 function renderAll() {

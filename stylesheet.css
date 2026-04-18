@@ -28,6 +28,9 @@
   --badge-red-bg: #fff1f1;
   --badge-red-text: #c81e1e;
 
+  --badge-orange-bg: #fff1e3;
+  --badge-orange-text: #c96f20;
+
   --today-card-bg: linear-gradient(180deg, rgba(255, 250, 238, 0.98) 0%, rgba(244, 231, 191, 0.90) 100%);
   --today-card-border: rgba(193, 160, 86, 0.52);
   --today-card-shadow: 0 10px 26px rgba(193, 160, 86, 0.18);
@@ -243,6 +246,15 @@ body{
   border-color: rgba(236, 148, 178, 0.84);
 }
 
+.summary-item.summary-item-totalpay .summary-label{
+  line-height: 1.4;
+}
+
+.summary-item.summary-item-totalpay .summary-value{
+  white-space: normal;
+  line-height: 1.35;
+}
+
 .summary-label{
   font-size: 12px;
   color: var(--muted);
@@ -449,6 +461,11 @@ body{
   background: var(--badge-red-bg);
 }
 
+.badge.orange{
+  color: var(--badge-orange-text);
+  background: var(--badge-orange-bg);
+}
+
 .time-area{
   min-width: 0;
 }
@@ -562,6 +579,10 @@ body{
 
 .worked-hours.is-absence{
   color: var(--badge-red-text);
+}
+
+.worked-hours.is-paid-leave{
+  color: var(--badge-orange-text);
 }
 
 .note-area{
