@@ -564,6 +564,28 @@ function formatTotalPayPair(actual, projected) {
   return `${formatYen(actual)} / ${formatYen(projected)}`;
 }
 
+function renderTotalPayValue(element, actual, projected) {
+  if (!element) return;
+
+  element.textContent = "";
+
+  const actualSpan = document.createElement("span");
+  actualSpan.className = "summary-totalpay-value-primary";
+  actualSpan.textContent = formatYen(actual);
+
+  const separatorSpan = document.createElement("span");
+  separatorSpan.className = "summary-totalpay-value-separator";
+  separatorSpan.textContent = " / ";
+
+  const projectedSpan = document.createElement("span");
+  projectedSpan.className = "summary-totalpay-value-secondary";
+  projectedSpan.textContent = formatYen(projected);
+
+  element.appendChild(actualSpan);
+  element.appendChild(separatorSpan);
+  element.appendChild(projectedSpan);
+}
+
 function updateYearSummaryButtonLabel() {
   if (!yearSummaryButton) return;
   yearSummaryButton.textContent = `${ui.selectedYear}年まとめ`;
@@ -1748,7 +1770,7 @@ function computeMonthlySummary() {
 
   sumRegularPay.textContent = formatYen(summary.regularPaySum);
   sumOverPay.textContent = formatYen(summary.overtimePayExtraSum);
-  sumTotalPay.textContent = formatTotalPayPair(summary.totalPaySum, summary.projectedTotalPaySum);
+  renderTotalPayValue(sumTotalPay, summary.totalPaySum, summary.projectedTotalPaySum);
 }
 
 function renderAll() {

@@ -75,17 +75,16 @@ body{
 }
 
 .topbar-right{
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: auto auto;
+  column-gap: 8px;
+  row-gap: 6px;
+  align-items: start;
   flex: 0 0 auto;
 }
 
 .topbar-action-stack{
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 6px;
+  display: contents;
 }
 
 .icon-button{
@@ -138,20 +137,27 @@ body{
 }
 
 .year-summary-button{
-  border: 1px solid rgba(191, 225, 255, 0.62);
-  background: rgba(233, 245, 255, 0.88);
-  color: var(--ink);
-  border-radius: 12px;
-  min-height: 38px;
-  width: 88px;
-  padding: 6px 8px;
-  font-size: 11px;
+  grid-column: 1 / -1;
+  border: 3px solid rgba(255, 255, 255, 0.78);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05)),
+    linear-gradient(115deg, #ff8da1 0%, #ffbf72 18%, #ffe57c 36%, #95e68f 56%, #6fd4ff 76%, #bd8cff 100%);
+  color: #21314d;
+  border-radius: 14px;
+  min-height: 42px;
+  width: 100%;
   font-weight: 900;
-  line-height: 1.2;
+  line-height: 1.15;
   text-align: center;
   white-space: normal;
   cursor: pointer;
-  transition: transform 120ms ease, background 120ms ease, box-shadow 120ms ease;
+  box-shadow:
+    0 10px 22px rgba(109, 137, 214, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  padding: 7px 10px;
+  font-size: 11px;
+  letter-spacing: 0.01em;
+  transition: transform 120ms ease, filter 120ms ease, box-shadow 120ms ease;
 }
 
 .year-summary-button:active{
@@ -159,8 +165,10 @@ body{
 }
 
 .year-summary-button:hover{
-  background: rgba(217, 240, 255, 0.96);
-  box-shadow: 0 8px 18px rgba(47, 128, 237, 0.12);
+  filter: saturate(1.08) brightness(1.02);
+  box-shadow:
+    0 14px 24px rgba(109, 137, 214, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
 }
 
 .month-tabs{
@@ -290,6 +298,15 @@ body{
 
 .summary-label-totalpay .summary-label-separator,
 .summary-label-totalpay .summary-label-secondary{
+  color: #6b7280;
+}
+
+.summary-totalpay-value-primary{
+  color: var(--ink);
+}
+
+.summary-totalpay-value-separator,
+.summary-totalpay-value-secondary{
   color: #6b7280;
 }
 
@@ -1228,7 +1245,6 @@ body{
   }
 
   .year-summary-button{
-    width: 82px;
     min-height: 36px;
     font-size: 10px;
   }
@@ -1245,7 +1261,8 @@ body{
   }
 
   .topbar-right{
-    gap: 6px;
+    column-gap: 6px;
+    row-gap: 6px;
   }
 
   .today-calendar{
