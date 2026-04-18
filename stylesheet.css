@@ -138,7 +138,7 @@ body{
 
 .year-summary-button{
   grid-column: 1 / -1;
-  border: 2px solid rgba(229, 126, 181, 0.5);
+  border: 2px solid rgba(226, 198, 132, 0.72);
   background:
     radial-gradient(circle at top left, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0) 40%),
     linear-gradient(120deg, #f8ecef 0%, #f7efe5 22%, #f6f3df 40%, #e8f1e4 60%, #e6eef9 80%, #eee7f8 100%);
@@ -154,7 +154,7 @@ body{
   box-shadow:
     0 10px 18px rgba(124, 124, 148, 0.14),
     inset 0 1px 0 rgba(255, 255, 255, 0.72),
-    inset 0 -1px 0 rgba(229, 126, 181, 0.14);
+    inset 0 -1px 0 rgba(226, 198, 132, 0.24);
   padding: 7px 10px;
   font-size: 11px;
   letter-spacing: 0.04em;
@@ -170,7 +170,7 @@ body{
   box-shadow:
     0 14px 22px rgba(124, 124, 148, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.82),
-    inset 0 -1px 0 rgba(229, 126, 181, 0.18);
+    inset 0 -1px 0 rgba(226, 198, 132, 0.3);
 }
 
 .month-tabs{
