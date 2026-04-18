@@ -65,7 +65,7 @@ body{
   position: relative;
   z-index: 5;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: start;
   gap: 10px;
   padding: max(10px, env(safe-area-inset-top)) 12px 10px 12px;
@@ -74,21 +74,18 @@ body{
   border-bottom: 1px solid rgba(229, 231, 235, 0.8);
 }
 
-.topbar-left{
-  padding-top: 4px;
-}
-
-.app-title{
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-}
-
 .topbar-right{
   display: flex;
   align-items: flex-start;
   gap: 8px;
   flex: 0 0 auto;
+}
+
+.topbar-action-stack{
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
 }
 
 .icon-button{
@@ -138,6 +135,32 @@ body{
 
 .settings-svg{
   display: block;
+}
+
+.year-summary-button{
+  border: 1px solid rgba(191, 225, 255, 0.62);
+  background: rgba(233, 245, 255, 0.88);
+  color: var(--ink);
+  border-radius: 12px;
+  min-height: 38px;
+  width: 88px;
+  padding: 6px 8px;
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1.2;
+  text-align: center;
+  white-space: normal;
+  cursor: pointer;
+  transition: transform 120ms ease, background 120ms ease, box-shadow 120ms ease;
+}
+
+.year-summary-button:active{
+  transform: scale(0.97);
+}
+
+.year-summary-button:hover{
+  background: rgba(217, 240, 255, 0.96);
+  box-shadow: 0 8px 18px rgba(47, 128, 237, 0.12);
 }
 
 .month-tabs{
@@ -619,6 +642,10 @@ body{
   backdrop-filter: blur(6px);
 }
 
+.dialog.dialog-compact{
+  width: min(420px, calc(100vw - 24px));
+}
+
 .dialog-card{
   background: rgba(255,255,255,0.95);
   border: 1px solid rgba(229, 231, 235, 0.95);
@@ -678,8 +705,12 @@ body{
   grid-template-columns: 1fr;
 }
 
+.backup-action-row.backup-action-row-split{
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .backup-action-btn{
-  width: min(100%, 340px);
+  width: 100%;
 }
 
 .field-label{
@@ -791,6 +822,127 @@ body{
   line-height: 1.35;
   resize: vertical;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+
+.category-dialog-options{
+  display: grid;
+  gap: 10px;
+}
+
+.category-option{
+  width: 100%;
+  border: 1px solid rgba(229, 231, 235, 0.95);
+  background: rgba(255,255,255,0.92);
+  border-radius: 16px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+}
+
+.category-option:active{
+  transform: scale(0.985);
+}
+
+.category-option:hover{
+  box-shadow: 0 10px 20px rgba(31, 41, 55, 0.08);
+}
+
+.category-option-main{
+  min-width: 0;
+}
+
+.category-option-label{
+  font-size: 15px;
+  font-weight: 900;
+  margin-bottom: 4px;
+}
+
+.category-option-note{
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.category-option-state{
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 900;
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: rgba(31, 41, 55, 0.08);
+  color: var(--muted);
+}
+
+.category-option.is-current{
+  border-color: rgba(47, 128, 237, 0.38);
+  box-shadow: 0 0 0 2px rgba(47, 128, 237, 0.12);
+}
+
+.category-option.is-paid-leave{
+  border-color: rgba(201, 111, 32, 0.28);
+  background: rgba(255, 241, 227, 0.92);
+}
+
+.category-option.is-holiday-work{
+  border-color: rgba(30, 86, 197, 0.26);
+  background: rgba(230, 244, 255, 0.92);
+}
+
+.category-option.is-absence{
+  border-color: rgba(200, 30, 30, 0.2);
+  background: rgba(255, 241, 241, 0.92);
+}
+
+.category-option.is-normal{
+  border-color: rgba(31, 138, 91, 0.24);
+  background: rgba(215, 247, 233, 0.88);
+}
+
+.year-summary-list{
+  display: grid;
+  gap: 10px;
+}
+
+.year-summary-item{
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(191, 225, 255, 0.55);
+  background: linear-gradient(180deg, rgba(233, 245, 255, 0.82) 0%, rgba(255, 255, 255, 0.96) 100%);
+}
+
+.year-summary-month{
+  font-size: 18px;
+  font-weight: 900;
+  color: #2f80ed;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.year-summary-body{
+  min-width: 0;
+}
+
+.year-summary-pay{
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.year-summary-days{
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 800;
 }
 
 .reaction-image-list{
@@ -947,9 +1099,10 @@ body{
   box-shadow: 0 4px 14px rgba(31, 41, 55, 0.08);
   border-radius: 20px;
   padding: 8px 10px 9px;
-  flex: 1 1 auto;
-  width: min(262px, calc(100vw - 144px));
-  min-width: 176px;
+  justify-self: start;
+  width: min(320px, 100%);
+  min-width: 0;
+  max-width: 100%;
   text-align: left;
   color: inherit;
   font: inherit;
@@ -1042,9 +1195,11 @@ body{
 
 @media (max-width: 520px){
   .today-calendar{
-    width: min(236px, calc(100vw - 138px));
-    min-width: 152px;
     padding: 7px 8px 8px;
+  }
+
+  .backup-action-row.backup-action-row-split{
+    grid-template-columns: 1fr;
   }
 
   .today-calendar-weekday,
@@ -1062,6 +1217,17 @@ body{
     min-height: 40px;
     padding: 7px;
   }
+
+  .year-summary-button{
+    width: 82px;
+    min-height: 36px;
+    font-size: 10px;
+  }
+
+  .year-summary-item{
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 10px;
+  }
 }
 
 @media (max-width: 400px){
@@ -1074,13 +1240,19 @@ body{
   }
 
   .today-calendar{
-    width: min(214px, calc(100vw - 132px));
-    min-width: 138px;
     padding-left: 6px;
     padding-right: 6px;
   }
 
   .today-calendar-title{
     font-size: 11px;
+  }
+
+  .category-option{
+    padding: 10px;
+  }
+
+  .category-option-state{
+    padding: 5px 8px;
   }
 }

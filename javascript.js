@@ -27,6 +27,33 @@ const CATEGORY = {
   ABSENCE: "absence"
 };
 
+const CATEGORY_CHOICES = [
+  {
+    value: CATEGORY.PAID_LEAVE,
+    label: "有給",
+    note: "時刻入力を閉じて、8時間勤務として扱います。",
+    className: "is-paid-leave"
+  },
+  {
+    value: CATEGORY.HOLIDAY_WORK,
+    label: "休日出勤",
+    note: "休日でも出勤と退勤を入力できるようにします。",
+    className: "is-holiday-work"
+  },
+  {
+    value: CATEGORY.ABSENCE,
+    label: "欠勤",
+    note: "勤務時間は入力せず、その日の給与は0円です。",
+    className: "is-absence"
+  },
+  {
+    value: CATEGORY.NORMAL,
+    label: "通常勤務に戻す",
+    note: "いつもの勤務入力に戻します。",
+    className: "is-normal"
+  }
+];
+
 const REACTION_SLOT = {
   CLOCK_IN: "clock_in",
   CLOCK_OUT: "clock_out",
@@ -451,7 +478,14 @@ const todayCalendar = document.getElementById("todayCalendar");
 
 const refreshButton = document.getElementById("refreshButton");
 const settingsButton = document.getElementById("settingsButton");
+const yearSummaryButton = document.getElementById("yearSummaryButton");
 const settingsDialog = document.getElementById("settingsDialog");
+const categoryDialog = document.getElementById("categoryDialog");
+const categoryDialogClose = document.getElementById("categoryDialogClose");
+const categoryDialogOptions = document.getElementById("categoryDialogOptions");
+const yearSummaryDialog = document.getElementById("yearSummaryDialog");
+const yearSummaryTitle = document.getElementById("yearSummaryTitle");
+const yearSummaryList = document.getElementById("yearSummaryList");
 const yearInput = document.getElementById("yearInput");
 const companyHolidayDate = document.getElementById("companyHolidayDate");
 const companyHolidayName = document.getElementById("companyHolidayName");
@@ -462,6 +496,7 @@ const saveWage = document.getElementById("saveWage");
 
 const exportData = document.getElementById("exportData");
 const importData = document.getElementById("importData");
+const copyBackup = document.getElementById("copyBackup");
 const backupText = document.getElementById("backupText");
 const reactionImageList = document.getElementById("reactionImageList");
 
@@ -480,6 +515,7 @@ const reactionOverlayText = document.getElementById("reactionOverlayText");
 let quickMessageTimer = null;
 let reactionOverlayTimer = null;
 let reactionImageDbPromise = null;
+let categoryDialogResolver = null;
 
 function showQuickMessage(text, durationMs = 2000) {
   if (!quickMessage) return;
@@ -489,6 +525,51 @@ function showQuickMessage(text, durationMs = 2000) {
   quickMessageTimer = window.setTimeout(() => {
     quickMessage.classList.remove("is-visible");
   }, durationMs);
+}
+
+function fallbackCopyText(text) {
+  const copySource = document.createElement("textarea");
+  copySource.value = text;
+  copySource.setAttribute("readonly", "");
+  copySource.style.position = "fixed";
+  copySource.style.opacity = "0";
+  copySource.style.pointerEvents = "none";
+  document.body.appendChild(copySource);
+  copySource.focus();
+  copySource.select();
+
+  let copied = false;
+  try {
+    copied = document.execCommand("copy");
+  } catch {
+    copied = false;
+  }
+
+  document.body.removeChild(copySource);
+  return copied;
+}
+
+async function copyTextToClipboard(text) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+
+  if (!fallbackCopyText(text)) {
+    throw new Error("clipboard unavailable");
+  }
+}
+
+function formatTotalPayPair(actual, projected) {
+  if (Math.round(actual) === Math.round(projected)) {
+    return formatYen(actual);
+  }
+  return `${formatYen(actual)} / ${formatYen(projected)}`;
+}
+
+function updateYearSummaryButtonLabel() {
+  if (!yearSummaryButton) return;
+  yearSummaryButton.textContent = `${ui.selectedYear}年まとめ`;
 }
 
 function hideReactionOverlay() {
@@ -1174,6 +1255,56 @@ function chooseCategory(current) {
   return null;
 }
 
+function renderCategoryDialogOptions(current) {
+  if (!categoryDialogOptions) return;
+
+  categoryDialogOptions.innerHTML = "";
+  for (const option of CATEGORY_CHOICES) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `category-option ${option.className}`;
+    if (option.value === current) button.classList.add("is-current");
+
+    const main = document.createElement("div");
+    main.className = "category-option-main";
+
+    const label = document.createElement("div");
+    label.className = "category-option-label";
+    label.textContent = option.label;
+
+    const note = document.createElement("div");
+    note.className = "category-option-note";
+    note.textContent = option.note;
+
+    const state = document.createElement("div");
+    state.className = "category-option-state";
+    state.textContent = option.value === current ? "現在" : "選択";
+
+    main.appendChild(label);
+    main.appendChild(note);
+    button.appendChild(main);
+    button.appendChild(state);
+
+    button.addEventListener("click", () => {
+      categoryDialog?.close(option.value);
+    });
+
+    categoryDialogOptions.appendChild(button);
+  }
+}
+
+function openCategoryChooser(current) {
+  if (!categoryDialog || !categoryDialogOptions) return Promise.resolve(null);
+
+  if (categoryDialog.open) categoryDialog.close("");
+  renderCategoryDialogOptions(current);
+
+  return new Promise((resolve) => {
+    categoryDialogResolver = resolve;
+    categoryDialog.showModal();
+  });
+}
+
 function renderDays() {
   const year = ui.selectedYear;
   const month = ui.selectedMonth;
@@ -1262,8 +1393,8 @@ function renderDays() {
     catBtn.innerHTML = svgSparklesCircle(catSelected);
     catBtn.setAttribute("aria-label", "\u52e4\u6020\u533a\u5206\u9078\u629e");
 
-    catBtn.addEventListener("click", () => {
-      const chosen = chooseCategory(rec.category || CATEGORY.NORMAL);
+    catBtn.addEventListener("click", async () => {
+      const chosen = await openCategoryChooser(rec.category || CATEGORY.NORMAL);
       if (!chosen) return;
 
       if (chosen === CATEGORY.PAID_LEAVE) {
@@ -1502,6 +1633,127 @@ function computeMonthlySummary() {
   sumTotalPay.textContent = `${formatYen(totalPaySum)} / ${formatYen(projectedTotalPaySum)}`;
 }
 
+function computeMonthSummary(year, month) {
+  const holidayMap = buildHolidayMap(year);
+  const compSet = companyHolidaySet(year);
+  const compNameMap = companyHolidayNameMap(year);
+
+  const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
+
+  let planned = 0;
+  let workedDays = 0;
+  let totalMinutes = 0;
+  let regularHoursSum = 0;
+  let overtimePremiumHoursSum = 0;
+  let regularPaySum = 0;
+  let overtimePayExtraSum = 0;
+  let totalPaySum = 0;
+  let projectedTotalPaySum = 0;
+  const regularDayPay = Math.round(8 * state.hourlyWage);
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const key = ymd(year, month, day);
+    const rec = getDayRecord(year, key);
+    const metrics = computeDayMetrics(year, key, holidayMap, compSet, compNameMap);
+
+    const weekend = isWeekendUTC(year, month, day);
+    const isNatHoliday = holidayMap.has(key);
+    const isCompHoliday = compSet.has(key);
+    const isHolidayLike = weekend.isSun || weekend.isSat || isNatHoliday || isCompHoliday;
+    if (!isHolidayLike) planned++;
+
+    if (rec.category === CATEGORY.PAID_LEAVE) {
+      workedDays++;
+    } else {
+      const inMin = minutesFromHHMM(rec.in);
+      const outMin = minutesFromHHMM(rec.out);
+      if (inMin != null && outMin != null) workedDays++;
+    }
+
+    totalMinutes += metrics.workMinutes;
+    regularHoursSum += metrics.regularHours;
+    overtimePremiumHoursSum += metrics.overtimePremiumHours;
+    regularPaySum += metrics.regularPay;
+    overtimePayExtraSum += metrics.overtimePayExtra;
+    totalPaySum += metrics.totalPay;
+
+    if (metrics.category === CATEGORY.NORMAL && !metrics.hasWorkRecord && !metrics.isOffDay) {
+      projectedTotalPaySum += regularDayPay;
+    } else {
+      projectedTotalPaySum += metrics.totalPay;
+    }
+  }
+
+  return {
+    planned,
+    workedDays,
+    totalHours: totalMinutes / 60,
+    regularHoursSum,
+    overtimePremiumHoursSum,
+    regularPaySum,
+    overtimePayExtraSum,
+    totalPaySum,
+    projectedTotalPaySum
+  };
+}
+
+function renderYearSummary() {
+  if (!yearSummaryList || !yearSummaryTitle) return;
+
+  yearSummaryTitle.textContent = `${ui.selectedYear}年まとめ`;
+  yearSummaryList.innerHTML = "";
+
+  for (let month = 1; month <= 12; month++) {
+    const summary = computeMonthSummary(ui.selectedYear, month);
+
+    const item = document.createElement("div");
+    item.className = "year-summary-item";
+
+    const monthText = document.createElement("div");
+    monthText.className = "year-summary-month tabnums";
+    monthText.textContent = `${month}月`;
+
+    const body = document.createElement("div");
+    body.className = "year-summary-body";
+
+    const pay = document.createElement("div");
+    pay.className = "year-summary-pay tabnums";
+    pay.textContent = formatTotalPayPair(summary.totalPaySum, summary.projectedTotalPaySum);
+
+    const days = document.createElement("div");
+    days.className = "year-summary-days tabnums";
+    days.textContent = `実働 ${summary.workedDays}日`;
+
+    body.appendChild(pay);
+    body.appendChild(days);
+    item.appendChild(monthText);
+    item.appendChild(body);
+    yearSummaryList.appendChild(item);
+  }
+}
+
+function openYearSummary() {
+  renderYearSummary();
+  if (!yearSummaryDialog?.open) yearSummaryDialog?.showModal();
+}
+
+function computeMonthlySummary() {
+  const summary = computeMonthSummary(ui.selectedYear, ui.selectedMonth);
+
+  const totalHoursText = `${(Math.round(summary.totalHours * 10) / 10).toFixed(1)}h`;
+  const regularHoursText = `${(Math.round(summary.regularHoursSum * 10) / 10).toFixed(1)}h`;
+  const overtimeHoursText = `${(Math.round(summary.overtimePremiumHoursSum * 10) / 10).toFixed(1)}h`;
+
+  sumWorkDays.textContent = `${summary.workedDays}日/${summary.planned}日`;
+  sumTotalHours.textContent = totalHoursText;
+  sumRegularHours.textContent = regularHoursText;
+  sumOverHours.textContent = overtimeHoursText;
+
+  sumRegularPay.textContent = formatYen(summary.regularPaySum);
+  sumOverPay.textContent = formatYen(summary.overtimePayExtraSum);
+  sumTotalPay.textContent = formatTotalPayPair(summary.totalPaySum, summary.projectedTotalPaySum);
+}
+
 function renderAll() {
   // month tabs active update
   for (const inner of monthTabsInners) {
@@ -1512,7 +1764,9 @@ function renderAll() {
     });
   }
 
+  updateYearSummaryButtonLabel();
   computeMonthlySummary();
+  if (yearSummaryDialog?.open) renderYearSummary();
   renderDays();
 }
 
@@ -1659,6 +1913,22 @@ function renderCompanyHolidayItem(year, holidayItem) {
 }
 
 settingsButton.addEventListener("click", openSettings);
+if (yearSummaryButton) {
+  yearSummaryButton.addEventListener("click", openYearSummary);
+}
+if (categoryDialogClose) {
+  categoryDialogClose.addEventListener("click", () => {
+    categoryDialog?.close("");
+  });
+}
+if (categoryDialog) {
+  categoryDialog.addEventListener("close", () => {
+    if (!categoryDialogResolver) return;
+    const resolve = categoryDialogResolver;
+    categoryDialogResolver = null;
+    resolve(categoryDialog.returnValue || null);
+  });
+}
 if (todayCalendar) {
   todayCalendar.addEventListener("click", () => {
     jumpToToday("smooth");
@@ -1723,7 +1993,25 @@ exportData.addEventListener("click", () => {
   backupText.value = JSON.stringify(payload);
   backupText.focus();
   backupText.select();
+  showQuickMessage("バックアップ文字列を作成しました");
 });
+
+if (copyBackup) {
+  copyBackup.addEventListener("click", async () => {
+    const txt = backupText.value.trim();
+    if (!txt) {
+      showQuickMessage("コピーする文字列がありません");
+      return;
+    }
+
+    try {
+      await copyTextToClipboard(txt);
+      showQuickMessage("バックアップ文字列をコピーしました");
+    } catch {
+      showQuickMessage("コピーできませんでした");
+    }
+  });
+}
 
 importData.addEventListener("click", () => {
   const txt = backupText.value.trim();
@@ -1749,6 +2037,7 @@ importData.addEventListener("click", () => {
     renderMonthTabs();
     renderAll();
     scrollAllMonthTabsToActive();
+    showQuickMessage("バックアップを復元しました");
     window.alert("復元しました。");
   } catch {
     window.alert("復元に失敗しました。");

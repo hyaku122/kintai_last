@@ -15,14 +15,10 @@
 
 <body>
   <header class="topbar">
-    <div class="topbar-left">
-      <div class="app-title" aria-label="アプリ名">刻の標</div>
-    </div>
-
     <button id="todayCalendar" class="today-calendar" type="button" aria-label="今日の日付へ移動"></button>
 
     <div class="topbar-right">
-      <button id="refreshButton" class="icon-button refresh-button" type="button" aria-label="最新版に更新">
+      <button id="refreshButton" class="icon-button refresh-button" type="button" aria-label="最新情報に更新">
         <svg class="refresh-svg" viewBox="0 0 64 64" width="28" height="28" aria-hidden="true" focusable="false">
           <path d="M44 14c8.9 4.9 13.8 14.9 11.3 25.2c-2.9 11.7-13.8 19.8-25.9 18.8C17.9 57 9 47.4 8.2 35.9c-.9-13.1 9.5-24 22.4-24c5.3 0 10.3 1.8 14.3 5"
                 fill="none" stroke="#ff7fb7" stroke-width="4" stroke-linecap="round"/>
@@ -31,20 +27,21 @@
           <path d="M12 15c.9 3.8 1.9 4.8 5.6 5.6c-3.7.8-4.7 1.8-5.6 5.6c-.8-3.8-1.8-4.8-5.6-5.6c3.8-.8 4.8-1.8 5.6-5.6z" fill="#fff1a8"/>
         </svg>
       </button>
-      <button id="settingsButton" class="icon-button settings-button" type="button" aria-label="設定">
-        <!-- かわいい歯車 + 小さなキラキラ（単色禁止） -->
-        <svg class="settings-svg" viewBox="0 0 64 64" width="28" height="28" aria-hidden="true" focusable="false">
-          <!-- sparkles -->
-          <path d="M49 10c1 4 2 5 6 6c-4 1-5 2-6 6c-1-4-2-5-6-6c4-1 5-2 6-6z" fill="#ffd36e"/>
-          <path d="M14 14c.8 3 1.5 3.7 4.6 4.5c-3.1.8-3.8 1.5-4.6 4.6c-.8-3.1-1.5-3.8-4.5-4.6c3-.8 3.7-1.5 4.5-4.5z" fill="#fff1a8"/>
-          <!-- gear body -->
-          <path d="M28.4 6.8c1.2-1.1 3-1.1 4.2 0l2.3 2.1c.9.8 2.2 1 3.3.4l2.8-1.5c1.5-.8 3.3-.2 4.1 1.3l1.6 2.8c.6 1.1 1.9 1.7 3.1 1.5l3-.5c1.7-.3 3.2.9 3.4 2.6l.3 3.2c.1 1.2 1 2.3 2.2 2.6l3 .8c1.6.4 2.5 2.1 2.1 3.7l-.8 3c-.3 1.2.2 2.5 1.3 3.2l2.7 1.7c1.4.9 1.8 2.8.9 4.2l-1.7 2.6c-.7 1.1-.6 2.5.2 3.5l2 2.3c1.1 1.2 1 3-.2 4.1l-2.3 2c-1 .9-1.3 2.3-.7 3.4l1.4 2.8c.8 1.5.1 3.3-1.4 4l-2.9 1.3c-1.1.5-1.8 1.7-1.6 2.9l.4 3c.2 1.7-1 3.2-2.7 3.3l-3.2.2c-1.2.1-2.3.9-2.7 2.1l-1 2.9c-.5 1.6-2.2 2.4-3.8 1.9l-2.9-.9c-1.2-.4-2.5 0-3.3 1l-2 2.2c-1.1 1.2-2.9 1.3-4.1.2l-2.3-2c-.9-.8-2.3-1-3.4-.4l-2.8 1.5c-1.5.8-3.3.2-4.1-1.3l-1.6-2.8c-.6-1.1-1.9-1.7-3.1-1.5l-3 .5c-1.7.3-3.2-.9-3.4-2.6l-.3-3.2c-.1-1.2-1-2.3-2.2-2.6l-3-.8c-1.6-.4-2.5-2.1-2.1-3.7l.8-3c.3-1.2-.2-2.5-1.3-3.2l-2.7-1.7c-1.4-.9-1.8-2.8-.9-4.2l1.7-2.6c.7-1.1.6-2.5-.2-3.5l-2-2.3c-1.1-1.2-1-3 .2-4.1l2.3-2c1-.9 1.3-2.3.7-3.4l-1.4-2.8c-.8-1.5-.1-3.3 1.4-4l2.9-1.3c1.1-.5 1.8-1.7 1.6-2.9l-.4-3c-.2-1.7 1-3.2 2.7-3.3l3.2-.2c1.2-.1 2.3-.9 2.7-2.1l1-2.9c.5-1.6 2.2-2.4 3.8-1.9l2.9.9c1.2.4 2.5 0 3.3-1z"
-                fill="#ffb7d5" stroke="#ff7fb7" stroke-width="1.5" />
-          <!-- center -->
-          <circle cx="32" cy="32" r="11.5" fill="#fff" stroke="#ff7fb7" stroke-width="1.5"/>
-          <circle cx="32" cy="32" r="4.2" fill="#ffd36e" stroke="#ff7fb7" stroke-width="1.2"/>
-        </svg>
-      </button>
+
+      <div class="topbar-action-stack">
+        <button id="settingsButton" class="icon-button settings-button" type="button" aria-label="設定">
+          <svg class="settings-svg" viewBox="0 0 64 64" width="28" height="28" aria-hidden="true" focusable="false">
+            <path d="M49 10c1 4 2 5 6 6c-4 1-5 2-6 6c-1-4-2-5-6-6c4-1 5-2 6-6z" fill="#ffd36e"/>
+            <path d="M14 14c.8 3 1.5 3.7 4.6 4.5c-3.1.8-3.8 1.5-4.6 4.6c-.8-3.1-1.5-3.8-4.5-4.6c3-.8 3.7-1.5 4.5-4.5z" fill="#fff1a8"/>
+            <path d="M28.4 6.8c1.2-1.1 3-1.1 4.2 0l2.3 2.1c.9.8 2.2 1 3.3.4l2.8-1.5c1.5-.8 3.3-.2 4.1 1.3l1.6 2.8c.6 1.1 1.9 1.7 3.1 1.5l3-.5c1.7-.3 3.2.9 3.4 2.6l.3 3.2c.1 1.2 1 2.3 2.2 2.6l3 .8c1.6.4 2.5 2.1 2.1 3.7l-.8 3c-.3 1.2.2 2.5 1.3 3.2l2.7 1.7c1.4.9 1.8 2.8.9 4.2l-1.7 2.6c-.7 1.1-.6 2.5.2 3.5l2 2.3c1.1 1.2 1 3-.2 4.1l-2.3 2c-1 .9-1.3 2.3-.7 3.4l1.4 2.8c.8 1.5.1 3.3-1.4 4l-2.9 1.3c-1.1.5-1.8 1.7-1.6 2.9l.4 3c.2 1.7-1 3.2-2.7 3.3l-3.2.2c-1.2.1-2.3.9-2.7 2.1l-1 2.9c-.5 1.6-2.2 2.4-3.8 1.9l-2.9-.9c-1.2-.4-2.5 0-3.3 1l-2 2.2c-1.1 1.2-2.9 1.3-4.1.2l-2.3-2c-.9-.8-2.3-1-3.4-.4l-2.8 1.5c-1.5.8-3.3.2-4.1-1.3l-1.6-2.8c-.6-1.1-1.9-1.7-3.1-1.5l-3 .5c-1.7.3-3.2-.9-3.4-2.6l-.3-3.2c-.1-1.2-1-2.3-2.2-2.6l-3-.8c-1.6-.4-2.5-2.1-2.1-3.7l.8-3c.3-1.2-.2-2.5-1.3-3.2l-2.7-1.7c-1.4-.9-1.8-2.8-.9-4.2l1.7-2.6c.7-1.1.6-2.5-.2-3.5l-2-2.3c-1.1-1.2-1-3 .2-4.1l2.3-2c1-.9 1.3-2.3.7-3.4l-1.4-2.8c-.8-1.5-.1-3.3 1.4-4l2.9-1.3c1.1-.5 1.8-1.7 1.6-2.9l-.4-3c-.2-1.7 1-3.2 2.7-3.3l3.2-.2c1.2-.1 2.3-.9 2.7-2.1l1-2.9c.5-1.6 2.2-2.4 3.8-1.9l2.9.9c1.2.4 2.5 0 3.3-1z"
+                  fill="#ffb7d5" stroke="#ff7fb7" stroke-width="1.5" />
+            <circle cx="32" cy="32" r="11.5" fill="#fff" stroke="#ff7fb7" stroke-width="1.5"/>
+            <circle cx="32" cy="32" r="4.2" fill="#ffd36e" stroke="#ff7fb7" stroke-width="1.2"/>
+          </svg>
+        </button>
+
+        <button id="yearSummaryButton" class="year-summary-button tabnums" type="button">2026年まとめ</button>
+      </div>
     </div>
   </header>
 
@@ -86,12 +83,11 @@
       </div>
     </section>
 
-    <section class="days" aria-label="日別行">
+    <section class="days" aria-label="日別一覧">
       <div id="daysContainer" class="days-container"></div>
     </section>
   </main>
 
-  <!-- 設定モーダル -->
   <dialog id="settingsDialog" class="dialog">
     <form method="dialog" class="dialog-card">
       <div class="dialog-header">
@@ -119,7 +115,7 @@
           <button id="addCompanyHoliday" class="btn" type="button">追加</button>
         </div>
         <div class="field-row">
-          <label class="field-label" for="companyHolidayName">休日名</label>
+          <label class="field-label" for="companyHolidayName">会社休日名</label>
           <input id="companyHolidayName" class="field-input" type="text" maxlength="40" placeholder="例: 創立記念日" />
         </div>
 
@@ -129,7 +125,7 @@
 
         <div class="section-title">時給</div>
         <div class="field-row">
-          <label class="field-label" for="hourlyWageInput">円</label>
+          <label class="field-label" for="hourlyWageInput">時給</label>
           <input id="hourlyWageInput" class="field-input tabnums" type="number" inputmode="numeric" min="0" step="1" />
           <button id="saveWage" class="btn" type="button">保存</button>
         </div>
@@ -141,7 +137,8 @@
           <button id="exportData" class="btn subtle backup-action-btn" type="button">バックアップ文字列を作成</button>
         </div>
         <textarea id="backupText" class="backup-text" rows="4" spellcheck="false"></textarea>
-        <div class="field-row backup-action-row">
+        <div class="field-row backup-action-row backup-action-row-split">
+          <button id="copyBackup" class="btn subtle backup-action-btn" type="button">文字列をコピー</button>
           <button id="importData" class="btn subtle backup-action-btn" type="button">バックアップ文字列を復元</button>
         </div>
 
@@ -157,6 +154,44 @@
       </div>
     </form>
   </dialog>
+
+  <dialog id="categoryDialog" class="dialog dialog-compact">
+    <div class="dialog-card">
+      <div class="dialog-header">
+        <div class="dialog-title">勤怠区分を選択</div>
+        <button id="categoryDialogClose" class="dialog-close" aria-label="閉じる" type="button">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" stroke="#4b5563" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="dialog-body">
+        <div class="field-note">反映したい区分をボタンで選べます。</div>
+        <div id="categoryDialogOptions" class="category-dialog-options" aria-label="勤怠区分一覧"></div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="yearSummaryDialog" class="dialog">
+    <form method="dialog" class="dialog-card">
+      <div class="dialog-header">
+        <div id="yearSummaryTitle" class="dialog-title tabnums">2026年まとめ</div>
+        <button class="dialog-close" value="cancel" aria-label="閉じる" type="submit">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" stroke="#4b5563" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="dialog-body">
+        <div class="field-note">総支給額は、現時点の金額 / その月に予定通り出勤した場合の見込み額です。</div>
+        <div id="yearSummaryList" class="year-summary-list" aria-label="年次まとめ一覧"></div>
+      </div>
+      <div class="dialog-footer">
+        <button class="btn" value="default" type="submit">閉じる</button>
+      </div>
+    </form>
+  </dialog>
+
   <div id="quickMessage" class="quick-message" role="status" aria-live="polite"></div>
   <div id="reactionOverlay" class="reaction-overlay" aria-live="polite" aria-atomic="true">
     <div class="reaction-overlay-card">
