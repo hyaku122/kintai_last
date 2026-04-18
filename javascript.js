@@ -1837,7 +1837,7 @@ function renderYearSummary() {
     if (summary.planned > 0 && summary.workedDays === summary.planned) {
       const smile = document.createElement("span");
       smile.className = "year-summary-smile";
-      smile.textContent = "☺";
+      smile.textContent = "👍";
       smile.setAttribute("aria-label", "予定どおり");
       days.appendChild(smile);
     }
