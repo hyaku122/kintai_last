@@ -586,6 +586,28 @@ function renderTotalPayValue(element, actual, projected) {
   element.appendChild(projectedSpan);
 }
 
+function renderYearSummaryPayValue(element, actual, projected) {
+  if (!element) return;
+
+  element.textContent = "";
+
+  const actualSpan = document.createElement("span");
+  actualSpan.className = "year-summary-pay-primary";
+  actualSpan.textContent = formatYen(actual);
+
+  const separatorSpan = document.createElement("span");
+  separatorSpan.className = "year-summary-pay-separator";
+  separatorSpan.textContent = " / ";
+
+  const projectedSpan = document.createElement("span");
+  projectedSpan.className = "year-summary-pay-secondary";
+  projectedSpan.textContent = formatYen(projected);
+
+  element.appendChild(actualSpan);
+  element.appendChild(separatorSpan);
+  element.appendChild(projectedSpan);
+}
+
 function updateYearSummaryButtonLabel() {
   if (!yearSummaryButton) return;
   yearSummaryButton.textContent = `${ui.selectedYear}年まとめ`;
@@ -1731,7 +1753,7 @@ function renderYearSummary() {
 
     const pay = document.createElement("div");
     pay.className = "year-summary-pay tabnums";
-    pay.textContent = formatTotalPayPair(summary.totalPaySum, summary.projectedTotalPaySum);
+    renderYearSummaryPayValue(pay, summary.totalPaySum, summary.projectedTotalPaySum);
 
     const days = document.createElement("div");
     days.className = "year-summary-days tabnums";
@@ -1745,9 +1767,87 @@ function renderYearSummary() {
   }
 }
 
+function renderYearSummary() {
+  if (!yearSummaryList || !yearSummaryTitle) return;
+
+  yearSummaryTitle.textContent = `${ui.selectedYear}年まとめ`;
+  yearSummaryList.innerHTML = "";
+
+  for (let month = 1; month <= 12; month++) {
+    const summary = computeMonthSummary(ui.selectedYear, month);
+
+    const item = document.createElement("div");
+    item.className = "year-summary-item";
+
+    const monthText = document.createElement("div");
+    monthText.className = "year-summary-month tabnums";
+    monthText.textContent = `${month}月`;
+
+    const body = document.createElement("div");
+    body.className = "year-summary-body";
+
+    const pay = document.createElement("div");
+    pay.className = "year-summary-pay tabnums";
+    renderYearSummaryPayValue(pay, summary.totalPaySum, summary.projectedTotalPaySum);
+
+    const days = document.createElement("div");
+    days.className = "year-summary-days tabnums";
+    days.textContent = `実働 ${summary.workedDays}日/${summary.planned}日`;
+
+    body.appendChild(pay);
+    body.appendChild(days);
+    item.appendChild(monthText);
+    item.appendChild(body);
+    yearSummaryList.appendChild(item);
+  }
+}
+
 function openYearSummary() {
   renderYearSummary();
   if (!yearSummaryDialog?.open) yearSummaryDialog?.showModal();
+}
+
+function renderYearSummary() {
+  if (!yearSummaryList || !yearSummaryTitle) return;
+
+  yearSummaryTitle.textContent = `${ui.selectedYear}年まとめ`;
+  yearSummaryList.innerHTML = "";
+
+  for (let month = 1; month <= 12; month++) {
+    const summary = computeMonthSummary(ui.selectedYear, month);
+
+    const item = document.createElement("div");
+    item.className = "year-summary-item";
+
+    const monthText = document.createElement("div");
+    monthText.className = "year-summary-month tabnums";
+    monthText.textContent = `${month}月`;
+
+    const body = document.createElement("div");
+    body.className = "year-summary-body";
+
+    const pay = document.createElement("div");
+    pay.className = "year-summary-pay tabnums";
+    renderYearSummaryPayValue(pay, summary.totalPaySum, summary.projectedTotalPaySum);
+
+    const days = document.createElement("div");
+    days.className = "year-summary-days tabnums";
+    days.textContent = `実働 ${summary.workedDays}日/${summary.planned}日`;
+
+    if (summary.planned > 0 && summary.workedDays === summary.planned) {
+      const smile = document.createElement("span");
+      smile.className = "year-summary-smile";
+      smile.textContent = "☺";
+      smile.setAttribute("aria-label", "予定どおり");
+      days.appendChild(smile);
+    }
+
+    body.appendChild(pay);
+    body.appendChild(days);
+    item.appendChild(monthText);
+    item.appendChild(body);
+    yearSummaryList.appendChild(item);
+  }
 }
 
 function computeMonthlySummary() {
