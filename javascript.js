@@ -561,9 +561,6 @@ async function copyTextToClipboard(text) {
 }
 
 function formatTotalPayPair(actual, projected) {
-  if (Math.round(actual) === Math.round(projected)) {
-    return formatYen(actual);
-  }
   return `${formatYen(actual)} / ${formatYen(projected)}`;
 }
 
