@@ -284,6 +284,15 @@ body{
   margin-bottom: 6px;
 }
 
+.summary-label-totalpay .summary-label-primary{
+  color: var(--ink);
+}
+
+.summary-label-totalpay .summary-label-separator,
+.summary-label-totalpay .summary-label-secondary{
+  color: #6b7280;
+}
+
 .summary-value{
   font-size: 16px;
   font-weight: 800;
