@@ -1596,7 +1596,6 @@ function computeMonthlySummary() {
   let regularPaySum = 0;
   let overtimePayExtraSum = 0;
   let totalPaySum = 0;
-  let projectedTotalPaySum = 0;
   const regularDayPay = Math.round(8 * state.hourlyWage);
 
   for (let day = 1; day <= daysInMonth; day++) {
@@ -1667,7 +1666,6 @@ function computeMonthSummary(year, month) {
   let regularPaySum = 0;
   let overtimePayExtraSum = 0;
   let totalPaySum = 0;
-  let projectedTotalPaySum = 0;
   const regularDayPay = Math.round(8 * state.hourlyWage);
 
   for (let day = 1; day <= daysInMonth; day++) {
@@ -1695,13 +1693,9 @@ function computeMonthSummary(year, month) {
     regularPaySum += metrics.regularPay;
     overtimePayExtraSum += metrics.overtimePayExtra;
     totalPaySum += metrics.totalPay;
-
-    if (metrics.category === CATEGORY.NORMAL && !metrics.hasWorkRecord && !metrics.isOffDay) {
-      projectedTotalPaySum += regularDayPay;
-    } else {
-      projectedTotalPaySum += metrics.totalPay;
-    }
   }
+
+  const projectedTotalPaySum = planned * regularDayPay;
 
   return {
     planned,
