@@ -20,23 +20,28 @@
     <div class="topbar-right">
       <button id="refreshButton" class="icon-button refresh-button" type="button" aria-label="最新情報に更新">
         <svg class="refresh-svg" viewBox="0 0 64 64" width="28" height="28" aria-hidden="true" focusable="false">
-          <path d="M44 14c8.9 4.9 13.8 14.9 11.3 25.2c-2.9 11.7-13.8 19.8-25.9 18.8C17.9 57 9 47.4 8.2 35.9c-.9-13.1 9.5-24 22.4-24c5.3 0 10.3 1.8 14.3 5"
-                fill="none" stroke="#ff7fb7" stroke-width="4" stroke-linecap="round"/>
-          <path d="M45 5l8 14-16 1z" fill="#ffd36e" stroke="#ff7fb7" stroke-width="1.6" stroke-linejoin="round"/>
-          <path d="M20 40l7 7 16-16" fill="none" stroke="#1f8a5b" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M12 15c.9 3.8 1.9 4.8 5.6 5.6c-3.7.8-4.7 1.8-5.6 5.6c-.8-3.8-1.8-4.8-5.6-5.6c3.8-.8 4.8-1.8 5.6-5.6z" fill="#fff1a8"/>
+          <path class="icon-sparkle icon-sparkle-gold" d="M16 7c1.1 4.5 2.4 5.8 6.9 6.9c-4.5 1.1-5.8 2.4-6.9 6.9c-1.1-4.5-2.4-5.8-6.9-6.9c4.5-1.1 5.8-2.4 6.9-6.9z"/>
+          <path class="icon-sparkle icon-sparkle-pink" d="M51 40c.8 3.2 1.7 4.1 4.9 4.9c-3.2.8-4.1 1.7-4.9 4.9c-.8-3.2-1.7-4.1-4.9-4.9c3.2-.8 4.1-1.7 4.9-4.9z"/>
+          <path class="refresh-loop refresh-loop-back" d="M45.5 17.7c-4.3-4.4-10.7-6.5-17.1-5.2c-10.6 2.1-17.5 12.4-15.4 23"/>
+          <path class="refresh-loop refresh-loop-front" d="M18.5 46.3c4.3 4.4 10.7 6.5 17.1 5.2c10.6-2.1 17.5-12.4 15.4-23"/>
+          <path class="refresh-arrow refresh-arrow-top" d="M45.3 8.9l5.8 10.8l-12.2.6z"/>
+          <path class="refresh-arrow refresh-arrow-bottom" d="M18.7 55.1l-5.8-10.8l12.2-.6z"/>
+          <path class="refresh-smile" d="M25.5 33.5c2.6 3.8 10.4 3.8 13 0"/>
+          <circle class="refresh-cheek" cx="23.2" cy="29.6" r="2"/>
+          <circle class="refresh-cheek" cx="40.8" cy="29.6" r="2"/>
         </svg>
       </button>
 
       <div class="topbar-action-stack">
         <button id="settingsButton" class="icon-button settings-button" type="button" aria-label="設定">
           <svg class="settings-svg" viewBox="0 0 64 64" width="28" height="28" aria-hidden="true" focusable="false">
-            <path d="M49 10c1 4 2 5 6 6c-4 1-5 2-6 6c-1-4-2-5-6-6c4-1 5-2 6-6z" fill="#ffd36e"/>
-            <path d="M14 14c.8 3 1.5 3.7 4.6 4.5c-3.1.8-3.8 1.5-4.6 4.6c-.8-3.1-1.5-3.8-4.5-4.6c3-.8 3.7-1.5 4.5-4.5z" fill="#fff1a8"/>
-            <path d="M28.4 6.8c1.2-1.1 3-1.1 4.2 0l2.3 2.1c.9.8 2.2 1 3.3.4l2.8-1.5c1.5-.8 3.3-.2 4.1 1.3l1.6 2.8c.6 1.1 1.9 1.7 3.1 1.5l3-.5c1.7-.3 3.2.9 3.4 2.6l.3 3.2c.1 1.2 1 2.3 2.2 2.6l3 .8c1.6.4 2.5 2.1 2.1 3.7l-.8 3c-.3 1.2.2 2.5 1.3 3.2l2.7 1.7c1.4.9 1.8 2.8.9 4.2l-1.7 2.6c-.7 1.1-.6 2.5.2 3.5l2 2.3c1.1 1.2 1 3-.2 4.1l-2.3 2c-1 .9-1.3 2.3-.7 3.4l1.4 2.8c.8 1.5.1 3.3-1.4 4l-2.9 1.3c-1.1.5-1.8 1.7-1.6 2.9l.4 3c.2 1.7-1 3.2-2.7 3.3l-3.2.2c-1.2.1-2.3.9-2.7 2.1l-1 2.9c-.5 1.6-2.2 2.4-3.8 1.9l-2.9-.9c-1.2-.4-2.5 0-3.3 1l-2 2.2c-1.1 1.2-2.9 1.3-4.1.2l-2.3-2c-.9-.8-2.3-1-3.4-.4l-2.8 1.5c-1.5.8-3.3.2-4.1-1.3l-1.6-2.8c-.6-1.1-1.9-1.7-3.1-1.5l-3 .5c-1.7.3-3.2-.9-3.4-2.6l-.3-3.2c-.1-1.2-1-2.3-2.2-2.6l-3-.8c-1.6-.4-2.5-2.1-2.1-3.7l.8-3c.3-1.2-.2-2.5-1.3-3.2l-2.7-1.7c-1.4-.9-1.8-2.8-.9-4.2l1.7-2.6c.7-1.1.6-2.5-.2-3.5l-2-2.3c-1.1-1.2-1-3 .2-4.1l2.3-2c1-.9 1.3-2.3.7-3.4l-1.4-2.8c-.8-1.5-.1-3.3 1.4-4l2.9-1.3c1.1-.5 1.8-1.7 1.6-2.9l-.4-3c-.2-1.7 1-3.2 2.7-3.3l3.2-.2c1.2-.1 2.3-.9 2.7-2.1l1-2.9c.5-1.6 2.2-2.4 3.8-1.9l2.9.9c1.2.4 2.5 0 3.3-1z"
-                  fill="#ffb7d5" stroke="#ff7fb7" stroke-width="1.5" />
-            <circle cx="32" cy="32" r="11.5" fill="#fff" stroke="#ff7fb7" stroke-width="1.5"/>
-            <circle cx="32" cy="32" r="4.2" fill="#ffd36e" stroke="#ff7fb7" stroke-width="1.2"/>
+            <path class="icon-sparkle icon-sparkle-gold" d="M50 8c.9 3.7 2 4.8 5.7 5.7c-3.7.9-4.8 2-5.7 5.7c-.9-3.7-2-4.8-5.7-5.7c3.7-.9 4.8-2 5.7-5.7z"/>
+            <path class="icon-sparkle icon-sparkle-blue" d="M13 15c.7 2.8 1.5 3.6 4.3 4.3c-2.8.7-3.6 1.5-4.3 4.3c-.7-2.8-1.5-3.6-4.3-4.3c2.8-.7 3.6-1.5 4.3-4.3z"/>
+            <path class="settings-flower" d="M32 8c3.5 0 6.2 5.8 7.1 8.5c2.6-1.2 8.9-2.5 11.4 0c2.5 2.5 1.2 8.8 0 11.4c2.7.9 8.5 3.6 8.5 7.1s-5.8 6.2-8.5 7.1c1.2 2.6 2.5 8.9 0 11.4c-2.5 2.5-8.8 1.2-11.4 0C38.2 56.2 35.5 62 32 62s-6.2-5.8-7.1-8.5c-2.6 1.2-8.9 2.5-11.4 0c-2.5-2.5-1.2-8.8 0-11.4C10.8 41.2 5 38.5 5 35s5.8-6.2 8.5-7.1c-1.2-2.6-2.5-8.9 0-11.4c2.5-2.5 8.8-1.2 11.4 0C25.8 13.8 28.5 8 32 8z"/>
+            <circle class="settings-center" cx="32" cy="35" r="13.5"/>
+            <path class="settings-smile" d="M25.5 35.8c2.6 4.2 10.4 4.2 13 0"/>
+            <circle class="settings-eye" cx="26.6" cy="30.6" r="2.1"/>
+            <circle class="settings-eye" cx="37.4" cy="30.6" r="2.1"/>
           </svg>
         </button>
 

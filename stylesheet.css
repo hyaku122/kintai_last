@@ -88,8 +88,12 @@ body{
 }
 
 .icon-button{
-  border: none;
-  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid rgba(255, 183, 213, 0.42);
+  background:
+    radial-gradient(circle at 28% 18%, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 42%),
+    linear-gradient(135deg, rgba(255, 214, 234, 0.84) 0%, rgba(217, 240, 255, 0.84) 100%);
   padding: 8px;
   border-radius: 14px;
   min-width: 44px;
@@ -98,7 +102,20 @@ body{
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 120ms ease, background 120ms ease;
+  box-shadow:
+    0 8px 16px rgba(124, 124, 148, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.76),
+    inset 0 -1px 0 rgba(255, 127, 183, 0.16);
+  transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease, border-color 120ms ease;
+}
+
+.icon-button:hover{
+  border-color: rgba(255, 127, 183, 0.38);
+  filter: brightness(1.025);
+  box-shadow:
+    0 12px 20px rgba(124, 124, 148, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.84),
+    inset 0 -1px 0 rgba(255, 127, 183, 0.22);
 }
 
 .icon-button:active{
@@ -111,29 +128,107 @@ body{
 }
 
 .refresh-button{
-  background: rgba(215, 247, 233, 0.60);
-  border: 1px solid rgba(31, 138, 91, 0.28);
+  background:
+    radial-gradient(circle at 28% 18%, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 42%),
+    linear-gradient(135deg, rgba(215, 247, 233, 0.86) 0%, rgba(217, 240, 255, 0.88) 52%, rgba(255, 214, 234, 0.76) 100%);
 }
 
 .refresh-button:hover{
-  background: rgba(191, 240, 220, 0.78);
+  border-color: rgba(72, 187, 150, 0.38);
 }
 
-.refresh-svg{
+.refresh-svg,
+.settings-svg{
   display: block;
+  overflow: visible;
 }
 
 .settings-button{
-  background: rgba(255, 214, 234, 0.45);
-  border: 1px solid rgba(255, 127, 183, 0.25);
+  background:
+    radial-gradient(circle at 28% 18%, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 42%),
+    linear-gradient(135deg, rgba(255, 214, 234, 0.86) 0%, rgba(245, 239, 225, 0.86) 45%, rgba(217, 240, 255, 0.82) 100%);
 }
 
 .settings-button:hover{
-  background: rgba(255, 214, 234, 0.65);
+  border-color: rgba(255, 127, 183, 0.42);
 }
 
-.settings-svg{
-  display: block;
+.icon-sparkle-gold{
+  fill: #ffe48a;
+  stroke: rgba(194, 134, 44, 0.24);
+  stroke-width: 1;
+}
+
+.icon-sparkle-pink{
+  fill: #ff9fc9;
+}
+
+.icon-sparkle-blue{
+  fill: #9bd8ff;
+}
+
+.refresh-loop{
+  fill: none;
+  stroke-linecap: round;
+  stroke-width: 4.8;
+}
+
+.refresh-loop-back{
+  stroke: #7bcfb4;
+}
+
+.refresh-loop-front{
+  stroke: #ff8fbe;
+}
+
+.refresh-arrow{
+  stroke: #c2618f;
+  stroke-linejoin: round;
+  stroke-width: 1.35;
+}
+
+.refresh-arrow-top{
+  fill: #ffe48a;
+}
+
+.refresh-arrow-bottom{
+  fill: #bfe1ff;
+}
+
+.refresh-smile{
+  fill: none;
+  stroke: #5f5a74;
+  stroke-linecap: round;
+  stroke-width: 3;
+}
+
+.refresh-cheek{
+  fill: #ffadc8;
+  opacity: 0.78;
+}
+
+.settings-flower{
+  fill: #ffb7d5;
+  stroke: #c2618f;
+  stroke-linejoin: round;
+  stroke-width: 1.45;
+}
+
+.settings-center{
+  fill: #fffdf8;
+  stroke: #f4b7cb;
+  stroke-width: 1.4;
+}
+
+.settings-eye{
+  fill: #5f5a74;
+}
+
+.settings-smile{
+  fill: none;
+  stroke: #5f5a74;
+  stroke-linecap: round;
+  stroke-width: 3;
 }
 
 .year-summary-button{
