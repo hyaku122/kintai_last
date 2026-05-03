@@ -130,7 +130,7 @@ body{
 .refresh-button{
   background:
     radial-gradient(circle at 28% 18%, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 42%),
-    linear-gradient(135deg, rgba(215, 247, 233, 0.86) 0%, rgba(217, 240, 255, 0.88) 52%, rgba(255, 214, 234, 0.76) 100%);
+    linear-gradient(135deg, rgba(224, 244, 237, 0.88) 0%, rgba(220, 238, 249, 0.88) 55%, rgba(249, 222, 234, 0.78) 100%);
 }
 
 .refresh-button:hover{
@@ -146,89 +146,58 @@ body{
 .settings-button{
   background:
     radial-gradient(circle at 28% 18%, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 42%),
-    linear-gradient(135deg, rgba(255, 214, 234, 0.86) 0%, rgba(245, 239, 225, 0.86) 45%, rgba(217, 240, 255, 0.82) 100%);
+    linear-gradient(135deg, rgba(249, 222, 234, 0.86) 0%, rgba(245, 239, 225, 0.86) 48%, rgba(220, 238, 249, 0.82) 100%);
 }
 
 .settings-button:hover{
   border-color: rgba(255, 127, 183, 0.42);
 }
 
-.icon-sparkle-gold{
+.icon-glint-gold{
   fill: #ffe48a;
   stroke: rgba(194, 134, 44, 0.24);
   stroke-width: 1;
 }
 
-.icon-sparkle-pink{
-  fill: #ff9fc9;
-}
-
-.icon-sparkle-blue{
-  fill: #9bd8ff;
-}
-
 .refresh-loop{
   fill: none;
   stroke-linecap: round;
-  stroke-width: 4.8;
+  stroke-width: 4.4;
 }
 
 .refresh-loop-back{
-  stroke: #7bcfb4;
+  stroke: #75bda9;
 }
 
 .refresh-loop-front{
-  stroke: #ff8fbe;
+  stroke: #d884a8;
 }
 
 .refresh-arrow{
-  stroke: #c2618f;
+  stroke: #a86887;
   stroke-linejoin: round;
   stroke-width: 1.35;
 }
 
 .refresh-arrow-top{
-  fill: #ffe48a;
+  fill: #f3d87a;
 }
 
 .refresh-arrow-bottom{
-  fill: #bfe1ff;
+  fill: #b7d8ec;
 }
 
-.refresh-smile{
-  fill: none;
-  stroke: #5f5a74;
-  stroke-linecap: round;
-  stroke-width: 3;
-}
-
-.refresh-cheek{
-  fill: #ffadc8;
-  opacity: 0.78;
-}
-
-.settings-flower{
-  fill: #ffb7d5;
-  stroke: #c2618f;
+.settings-gear{
+  fill: #e9bfd0;
+  stroke: #a86887;
   stroke-linejoin: round;
-  stroke-width: 1.45;
+  stroke-width: 1.5;
 }
 
 .settings-center{
   fill: #fffdf8;
-  stroke: #f4b7cb;
+  stroke: #d7a5b9;
   stroke-width: 1.4;
-}
-
-.settings-eye{
-  fill: #5f5a74;
-}
-
-.settings-smile{
-  fill: none;
-  stroke: #5f5a74;
-  stroke-linecap: round;
-  stroke-width: 3;
 }
 
 .year-summary-button{
