@@ -20,6 +20,9 @@ const DEFAULTS = {
   yearData: {}
 };
 
+const MIN_YEAR = 2000;
+const MAX_YEAR = 2099;
+
 const CATEGORY = {
   NORMAL: "normal",
   PAID_LEAVE: "paid_leave",
@@ -479,6 +482,8 @@ const todayCalendar = document.getElementById("todayCalendar");
 const refreshButton = document.getElementById("refreshButton");
 const settingsButton = document.getElementById("settingsButton");
 const yearSummaryButton = document.getElementById("yearSummaryButton");
+const previousYearButton = document.getElementById("previousYearButton");
+const nextYearButton = document.getElementById("nextYearButton");
 const settingsDialog = document.getElementById("settingsDialog");
 const categoryDialog = document.getElementById("categoryDialog");
 const categoryDialogClose = document.getElementById("categoryDialogClose");
@@ -611,6 +616,31 @@ function renderYearSummaryPayValue(element, actual, projected) {
 function updateYearSummaryButtonLabel() {
   if (!yearSummaryButton) return;
   yearSummaryButton.textContent = `${ui.selectedYear}年まとめ`;
+}
+
+function updateYearSwitchButtons() {
+  if (previousYearButton) previousYearButton.disabled = ui.selectedYear <= MIN_YEAR;
+  if (nextYearButton) nextYearButton.disabled = ui.selectedYear >= MAX_YEAR;
+}
+
+function setSelectedYear(year, { refreshSettings = false } = {}) {
+  if (!Number.isFinite(year)) return;
+  const y = Math.max(MIN_YEAR, Math.min(MAX_YEAR, Math.floor(year)));
+  ui.selectedYear = y;
+  state.year = y;
+  ensureYearData(y);
+  saveState();
+
+  if (yearInput) yearInput.value = String(y);
+  if (refreshSettings && settingsDialog?.open) openSettings();
+
+  renderMonthTabs();
+  renderAll();
+  scrollAllMonthTabsToActive();
+}
+
+function moveSelectedYear(delta) {
+  setSelectedYear(ui.selectedYear + delta);
 }
 
 function hideReactionOverlay() {
@@ -1878,6 +1908,7 @@ function renderAll() {
   }
 
   updateYearSummaryButtonLabel();
+  updateYearSwitchButtons();
   computeMonthlySummary();
   if (yearSummaryDialog?.open) renderYearSummary();
   renderDays();
@@ -2029,6 +2060,12 @@ settingsButton.addEventListener("click", openSettings);
 if (yearSummaryButton) {
   yearSummaryButton.addEventListener("click", openYearSummary);
 }
+if (previousYearButton) {
+  previousYearButton.addEventListener("click", () => moveSelectedYear(-1));
+}
+if (nextYearButton) {
+  nextYearButton.addEventListener("click", () => moveSelectedYear(1));
+}
 if (categoryDialogClose) {
   categoryDialogClose.addEventListener("click", () => {
     categoryDialog?.close("");
@@ -2085,16 +2122,7 @@ saveWage.addEventListener("click", () => {
 yearInput.addEventListener("change", () => {
   const v = Number(yearInput.value);
   if (!Number.isFinite(v)) return;
-  const y = Math.max(2000, Math.min(2099, Math.floor(v)));
-  ui.selectedYear = y;
-  state.year = y;
-  ensureYearData(y);
-  saveState();
-  // 設定画面内も再描画
-  openSettings();
-  renderMonthTabs();
-  renderAll();
-  scrollAllMonthTabsToActive();
+  setSelectedYear(v, { refreshSettings: true });
 });
 
 exportData.addEventListener("click", () => {
@@ -2217,10 +2245,11 @@ function init() {
   if (handleHardReloadStep()) return;
 
   const today = getTodayContext();
-  ensureYearData(today.year);
-  state.year = today.year;
+  const initialYear = Math.max(MIN_YEAR, Math.min(MAX_YEAR, Math.floor(Number.isFinite(state.year) ? state.year : today.year)));
+  ensureYearData(initialYear);
+  state.year = initialYear;
   saveState();
-  ui.selectedYear = today.year;
+  ui.selectedYear = initialYear;
   ui.selectedMonth = today.month;
   applySummaryToneClasses();
   renderTodayCalendar();
@@ -2228,10 +2257,12 @@ function init() {
   renderMonthTabs();
   renderAll();
   scrollAllMonthTabsToActive("auto");
-  window.requestAnimationFrame(() => {
-    scrollToDateCard(today.key, "auto");
-    flashDateCard(today.key);
-  });
+  if (ui.selectedYear === today.year && ui.selectedMonth === today.month) {
+    window.requestAnimationFrame(() => {
+      scrollToDateCard(today.key, "auto");
+      flashDateCard(today.key);
+    });
+  }
 
   registerServiceWorker();
 }
