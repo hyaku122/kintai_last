@@ -184,25 +184,30 @@ body{
 .year-switch-button{
   appearance: none;
   -webkit-appearance: none;
-  border: none;
-  background: #ffffff;
-  border-radius: 4px;
+  border: 1px solid rgba(255, 183, 213, 0.42);
+  background:
+    radial-gradient(circle at 28% 20%, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0) 42%),
+    linear-gradient(135deg, rgba(255, 214, 234, 0.82) 0%, rgba(217, 240, 255, 0.82) 100%);
+  border-radius: 12px;
   min-height: 36px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   box-shadow:
-    0 4px 12px rgba(31, 41, 55, 0.10),
-    inset 0 0 0 1px rgba(229, 231, 235, 0.86);
-  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+    0 8px 16px rgba(124, 124, 148, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.76),
+    inset 0 -1px 0 rgba(255, 127, 183, 0.16);
+  transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease, border-color 120ms ease;
 }
 
 .year-switch-button:hover{
-  background: rgba(255,255,255,0.96);
+  border-color: rgba(255, 127, 183, 0.38);
+  filter: brightness(1.025);
   box-shadow:
-    0 8px 16px rgba(31, 41, 55, 0.12),
-    inset 0 0 0 1px rgba(191, 225, 255, 0.82);
+    0 12px 20px rgba(124, 124, 148, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.84),
+    inset 0 -1px 0 rgba(255, 127, 183, 0.22);
 }
 
 .year-switch-button:active{
@@ -212,6 +217,7 @@ body{
 .year-switch-button:disabled{
   opacity: 0.45;
   cursor: not-allowed;
+  filter: saturate(0.72);
 }
 
 .year-switch-triangle{
@@ -223,13 +229,13 @@ body{
 .year-switch-button-prev .year-switch-triangle{
   border-top: 7px solid transparent;
   border-bottom: 7px solid transparent;
-  border-right: 10px solid #111827;
+  border-right: 10px solid #c2618f;
 }
 
 .year-switch-button-next .year-switch-triangle{
   border-top: 7px solid transparent;
   border-bottom: 7px solid transparent;
-  border-left: 10px solid #111827;
+  border-left: 10px solid #2f80ed;
 }
 
 .month-tabs{
